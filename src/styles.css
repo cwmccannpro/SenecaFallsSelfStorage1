@@ -1,0 +1,288 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap");
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-warm: var(--warm);
+  --color-warm-foreground: var(--warm-foreground);
+}
+
+:root {
+  --radius: 0.25rem;
+  --background: #F4E9D8;
+  --foreground: #2A1412;
+  --card: #FDF8F0;
+  --card-foreground: #2A1412;
+  --popover: #FDF8F0;
+  --popover-foreground: #2A1412;
+  --primary: #4A0F14;
+  --primary-foreground: #F4E9D8;
+  --warm: #F4E9D8;
+  --warm-foreground: #2A1412;
+  --secondary: #EDE0CC;
+  --secondary-foreground: #2A1412;
+  --muted: #EDE0CC;
+  --muted-foreground: #7A5C4A;
+  --accent: #C78A3B;
+  --accent-foreground: #2A1412;
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: #F4E9D8;
+  --border: #D8C6AF;
+  --input: #D8C6AF;
+  --ring: #C78A3B;
+}
+
+/* ── Hero image responsive zoom ─────────────────────── */
+.hero-img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+  object-position: center 8%; /* keeps sign + units visible on mobile */
+  max-height: 340px;
+}
+
+@media (min-width: 640px) {
+  .hero-img {
+    max-height: 560px;
+    object-position: center top;
+  }
+}
+
+/* ── Navbar-sized 3-D press buttons ─────────────────── */
+.btn-nav-primary {
+  display: none;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 9px 20px;
+  border: 0;
+  border-radius: 4px;
+  background-color: #4A0F14;
+  color: #F4E9D8;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  box-shadow: #2A1412 0px 5px 0px 0px;
+  text-decoration: none;
+  white-space: nowrap;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-nav-primary:hover {
+  box-shadow: #2A1412 0px 3px 0px 0px;
+  transform: translateY(2px);
+}
+.btn-nav-primary:active {
+  box-shadow: #2A1412 0px 0px 0px 0px;
+  transform: translateY(5px);
+  transition: box-shadow 120ms ease, transform 120ms ease;
+}
+
+@media (min-width: 1024px) {
+  .btn-nav-primary {
+    display: inline-flex;
+  }
+}
+
+.btn-nav-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 8px 19px;
+  border-radius: 4px;
+  background-color: transparent;
+  color: #E0A34A;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  border: 1px solid #C78A3B;
+  box-shadow: #7A4A20 0px 5px 0px 0px;
+  text-decoration: none;
+  white-space: nowrap;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-nav-gold:hover {
+  box-shadow: #7A4A20 0px 3px 0px 0px;
+  transform: translateY(2px);
+  background-color: rgba(199, 138, 59, 0.12);
+  color: #F4E9D8;
+}
+.btn-nav-gold:active {
+  box-shadow: #7A4A20 0px 0px 0px 0px;
+  transform: translateY(5px);
+  transition: box-shadow 120ms ease, transform 120ms ease;
+}
+
+/* ── Vintage 3-D press buttons ───────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 14px 36px;
+  border: 0;
+  border-radius: 6px;
+  background-color: #4A0F14;
+  color: #F4E9D8;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: #2A1412 0px 8px 0px 0px;
+  text-decoration: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-primary:hover {
+  box-shadow: #2A1412 0px 5px 0px 0px;
+  transform: translateY(2px);
+}
+.btn-primary:active {
+  box-shadow: #2A1412 0px 0px 0px 0px;
+  transform: translateY(8px);
+  transition: box-shadow 120ms ease, transform 120ms ease;
+}
+
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 14px 36px;
+  border: 0;
+  border-radius: 6px;
+  background-color: #C78A3B;
+  color: #2A1412;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: #7A4A20 0px 8px 0px 0px;
+  text-decoration: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-gold:hover {
+  box-shadow: #7A4A20 0px 5px 0px 0px;
+  transform: translateY(2px);
+  background-color: #D9983F;
+}
+.btn-gold:active {
+  box-shadow: #7A4A20 0px 0px 0px 0px;
+  transform: translateY(8px);
+  transition: box-shadow 120ms ease, transform 120ms ease;
+}
+
+.btn-outline-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 13px 35px;
+  border-radius: 6px;
+  background-color: transparent;
+  color: #4A0F14;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  border: 1px solid #C78A3B;
+  box-shadow: #C78A3B 0px 6px 0px 0px;
+  text-decoration: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-outline-gold:hover {
+  box-shadow: #C78A3B 0px 4px 0px 0px;
+  transform: translateY(2px);
+  background-color: rgba(199, 138, 59, 0.08);
+}
+.btn-outline-gold:active {
+  box-shadow: #C78A3B 0px 0px 0px 0px;
+  transform: translateY(6px);
+  transition: box-shadow 120ms ease, transform 120ms ease;
+}
+
+@keyframes sfss-spin {
+  to { transform: rotate(360deg); }
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+
+  label {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 600;
+    color: #2A1412;
+  }
+
+  input, textarea {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1rem;
+  }
+}
