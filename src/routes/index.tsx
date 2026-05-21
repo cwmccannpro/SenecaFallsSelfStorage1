@@ -905,9 +905,169 @@ const formSchema = z.object({
   message: z.string().trim().max(1000).optional().or(z.literal("")),
 });
 
+function InquirySuccess({
+  name,
+  unitSize,
+  onReset,
+}: {
+  name: string;
+  unitSize: string;
+  onReset: () => void;
+}) {
+  const displaySize = unitSize === "not-sure" ? "a unit" : `a ${unitSize} unit`;
+  return (
+    <div
+      style={{
+        background: "#FDF8F0",
+        border: "1px solid #D8C6AF",
+        borderTop: "3px solid #C78A3B",
+        padding: "2.5rem 2rem",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        gap: "1rem",
+      }}
+    >
+      {/* Gold circle check */}
+      <div
+        style={{
+          width: "56px",
+          height: "56px",
+          borderRadius: "50%",
+          background: "rgba(199,138,59,0.12)",
+          border: "2px solid #C78A3B",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "1.4rem",
+          color: "#C78A3B",
+        }}
+      >
+        ✦
+      </div>
+
+      {/* Eyebrow */}
+      <p
+        style={{
+          fontFamily: "'Cormorant Garamond', serif",
+          color: "#C78A3B",
+          fontSize: "0.7rem",
+          fontWeight: 600,
+          letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          margin: 0,
+        }}
+      >
+        Inquiry Received
+      </p>
+
+      {/* Heading */}
+      <h3
+        style={{
+          fontFamily: "'Playfair Display', serif",
+          color: "#2A1412",
+          fontSize: "1.5rem",
+          fontWeight: 700,
+          margin: 0,
+          lineHeight: 1.25,
+        }}
+      >
+        Thank you, {name}.
+      </h3>
+
+      {/* Gold rule */}
+      <div style={{ width: "60px", height: "1px", background: "#C78A3B" }} />
+
+      {/* Body */}
+      <p
+        style={{
+          fontFamily: "'Cormorant Garamond', serif",
+          color: "#5C3A28",
+          fontSize: "1.05rem",
+          lineHeight: "1.75",
+          margin: 0,
+          maxWidth: "360px",
+        }}
+      >
+        We've received your request for <strong>{displaySize}</strong> and will
+        be in touch within one business day.
+      </p>
+
+      {/* Direct contact nudge */}
+      <p
+        style={{
+          fontFamily: "'Cormorant Garamond', serif",
+          color: "#7A5C4A",
+          fontSize: "0.95rem",
+          margin: 0,
+        }}
+      >
+        Need a faster answer?
+      </p>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", justifyContent: "center" }}>
+        <a
+          href={PHONE_HREF}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.4rem",
+            fontFamily: "'Cormorant Garamond', serif",
+            color: "#4A0F14",
+            fontSize: "1rem",
+            fontWeight: 700,
+            textDecoration: "none",
+          }}
+        >
+          <Phone className="h-4 w-4" style={{ color: "#C78A3B" }} />
+          {PHONE_DISPLAY}
+        </a>
+        <a
+          href={`mailto:${EMAIL}`}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.4rem",
+            fontFamily: "'Cormorant Garamond', serif",
+            color: "#4A0F14",
+            fontSize: "1rem",
+            textDecoration: "none",
+          }}
+        >
+          <Mail className="h-4 w-4" style={{ color: "#C78A3B" }} />
+          {EMAIL}
+        </a>
+      </div>
+
+      {/* Reset link */}
+      <button
+        onClick={onReset}
+        style={{
+          marginTop: "0.5rem",
+          background: "none",
+          border: "none",
+          fontFamily: "'Cormorant Garamond', serif",
+          color: "#7A5C4A",
+          fontSize: "0.9rem",
+          cursor: "pointer",
+          textDecoration: "underline",
+        }}
+      >
+        Submit another inquiry
+      </button>
+    </div>
+  );
+}
+
+// Set this to your Formspree endpoint once you sign up at formspree.io
+// e.g. "https://formspree.io/f/xabc1234"
+const FORMSPREE_ENDPOINT = "";
+
 function Contact() {
   const [submitting, setSubmitting] = useState(false);
   const [unitSize, setUnitSize] = useState("");
+  const [submitted, setSubmitted] = useState<{ name: string; unitSize: string } | null>(null);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -924,12 +1084,30 @@ function Contact() {
       return;
     }
     setSubmitting(true);
-    // Placeholder: no backend wired yet
-    await new Promise((r) => setTimeout(r, 600));
-    setSubmitting(false);
-    (e.target as HTMLFormElement).reset();
-    setUnitSize("");
-    toast.success("Thanks — we'll be in touch shortly.");
+
+    if (FORMSPREE_ENDPOINT) {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name: parsed.data.name,
+          email: parsed.data.email,
+          phone: parsed.data.phone,
+          unit_size: parsed.data.unitSize,
+          message: parsed.data.message ?? "",
+        }),
+      });
+      setSubmitting(false);
+      if (!res.ok) {
+        toast.error(`Something went wrong. Please call us at ${PHONE_DISPLAY}.`);
+        return;
+      }
+    } else {
+      await new Promise((r) => setTimeout(r, 500));
+      setSubmitting(false);
+    }
+
+    setSubmitted({ name: parsed.data.name, unitSize: parsed.data.unitSize });
   };
 
   return (
@@ -949,7 +1127,7 @@ function Contact() {
         </div>
 
         <div className="mt-8 sm:mt-12 flex flex-col gap-8">
-          {/* Top row: info box + form side by side */}
+          {/* Top row: info box + form/success side by side */}
           <div className="grid gap-8 lg:grid-cols-2 lg:items-stretch">
             <div className="p-6" style={{ background: '#FDF8F0', border: '1px solid #D8C6AF' }}>
               <h3 style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: '1.2rem', fontWeight: 700 }}>Email or Call</h3>
@@ -978,6 +1156,13 @@ function Contact() {
               </ul>
             </div>
 
+            {submitted ? (
+              <InquirySuccess
+                name={submitted.name}
+                unitSize={submitted.unitSize}
+                onReset={() => { setSubmitted(null); setUnitSize(""); }}
+              />
+            ) : (
             <form id="availability-form" onSubmit={onSubmit} className="p-6 sm:p-8 space-y-4" style={{ background: '#FDF8F0', border: '1px solid #D8C6AF' }}>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
@@ -1019,6 +1204,7 @@ function Contact() {
                 {submitting ? "Sending..." : "Send Inquiry"}
               </button>
             </form>
+            )}
           </div>
 
           {/* Map full width below both boxes */}
