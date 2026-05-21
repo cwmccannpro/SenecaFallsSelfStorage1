@@ -161,20 +161,76 @@ function AdminOverview() {
       {/* Quick links */}
       <div style={{ marginTop: "2.5rem" }}>
         <h2 style={{ ...H2, marginBottom: "1rem" }}>Quick Actions</h2>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
-          {[
-            { href: "/admin/customers", icon: <Users size={16} />, label: "Manage Customers" },
-            { href: "/admin/units", icon: <Building2 size={16} />, label: "Manage Units" },
-            { href: "/admin/payment-links", icon: <ClipboardList size={16} />, label: "Manage Payment Links" },
-          ].map(({ href, icon, label }) => (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "0.75rem",
+          }}
+        >
+          {(
+            [
+              { href: "/admin/customers", Icon: Users, label: "Customers" },
+              { href: "/admin/units", Icon: Building2, label: "Units" },
+              { href: "/admin/payment-links", Icon: ClipboardList, label: "Payment Links" },
+            ] as const
+          ).map(({ href, Icon, label }) => (
             <a
               key={href}
               href={href}
-              className="btn-outline-gold"
-              style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.65rem",
+                padding: "1.5rem 0.5rem",
+                minHeight: "110px",
+                background: "#FDF8F0",
+                border: "1px solid #C78A3B",
+                boxShadow: "#C78A3B 0px 4px 0px 0px",
+                textDecoration: "none",
+                transition: "box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(2px)";
+                e.currentTarget.style.boxShadow = "#C78A3B 0px 2px 0px 0px";
+                e.currentTarget.style.background = "rgba(199,138,59,0.06)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "";
+                e.currentTarget.style.boxShadow = "#C78A3B 0px 4px 0px 0px";
+                e.currentTarget.style.background = "#FDF8F0";
+              }}
             >
-              {icon}
-              {label}
+              <div
+                style={{
+                  width: "44px",
+                  height: "44px",
+                  background: "rgba(199,138,59,0.12)",
+                  border: "1px solid rgba(199,138,59,0.4)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <Icon size={20} style={{ color: "#C78A3B" }} />
+              </div>
+              <span
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  color: "#2A1412",
+                  fontSize: "0.8rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  textAlign: "center",
+                  lineHeight: 1.35,
+                }}
+              >
+                {label}
+              </span>
             </a>
           ))}
         </div>

@@ -100,7 +100,7 @@ function AdminNav({ user, onSignOut }: { user: User | null; onSignOut: () => voi
           Admin
         </span>
 
-        <nav style={{ display: "flex", alignItems: "center", gap: "0.25rem", flex: 1, overflowX: "auto" }}>
+        <nav className="hidden md:flex" style={{ alignItems: "center", gap: "0.25rem", flex: 1, overflowX: "auto" }}>
           {navLinks.map(({ to, icon: Icon, label, exact }) => (
             <Link
               key={to}
