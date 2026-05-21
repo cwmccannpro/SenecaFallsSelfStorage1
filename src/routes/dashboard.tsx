@@ -63,17 +63,37 @@ function DashboardPage() {
 
     const { data: link } = await supabase
       .from("payment_links")
-      .select("square_payment_link_url")
+      .select("square_payment_link_url, amount")
       .eq("unit_size", customer.unit.unit_size)
       .eq("billing_type", billingType)
       .eq("active", true)
       .maybeSingle();
 
-    setPayingType(null);
-
-    if (link?.square_payment_link_url) {
-      window.open(link.square_payment_link_url, "_blank", "noopener,noreferrer");
+    if (!link?.square_payment_link_url) {
+      setPayingType(null);
+      return;
     }
+
+    // Insert a pending payment row so we can match it on return
+    const { data: payment } = await supabase
+      .from("payments")
+      .insert({
+        customer_id: customer.id,
+        unit_id: customer.unit.id,
+        billing_type: billingType,
+        amount: link.amount,
+        status: "pending",
+        payment_date: null,
+        notes: null,
+      })
+      .select("id")
+      .single();
+
+    if (payment?.id) {
+      localStorage.setItem("sfss_pending_payment_id", payment.id);
+    }
+
+    window.location.href = link.square_payment_link_url;
   };
 
   const handleSignOut = async () => {

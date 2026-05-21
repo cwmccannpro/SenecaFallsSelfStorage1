@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { CheckCircle, Home, Phone } from "lucide-react";
 import logoImg from "@/assets/logo4.png";
+import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/payment-success")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -20,6 +22,23 @@ function PaymentSuccess() {
     Route.useSearch();
 
   const confirmationId = orderId || checkoutId || transactionId || referenceId;
+
+  useEffect(() => {
+    const pendingId = localStorage.getItem("sfss_pending_payment_id");
+    if (!pendingId) return;
+
+    supabase
+      .from("payments")
+      .update({
+        status: "paid",
+        payment_date: new Date().toISOString(),
+        notes: transactionId ? `Square transactionId: ${transactionId}` : (orderId ? `Square orderId: ${orderId}` : null),
+      })
+      .eq("id", pendingId)
+      .then(() => {
+        localStorage.removeItem("sfss_pending_payment_id");
+      });
+  }, [transactionId, orderId]);
 
   return (
     <div
