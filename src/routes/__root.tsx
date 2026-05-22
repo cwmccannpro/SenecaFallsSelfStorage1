@@ -10,6 +10,7 @@ import {
 import { AuthProvider } from "@/contexts/auth";
 
 import appCss from "../styles.css?url";
+import faviconUrl from "../assets/sfssfavicon.png?url";
 
 function NotFoundComponent() {
   return (
@@ -84,6 +85,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      {
+        rel: "icon",
+        href: faviconUrl,
+        type: "image/png",
       },
     ],
   }),
