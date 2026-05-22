@@ -10,7 +10,7 @@ import {
 import { AuthProvider } from "@/contexts/auth";
 
 import appCss from "../styles.css?url";
-import faviconUrl from "../assets/sfssfavicon.png?url";
+import faviconUrl from "../assets/favicon.png?url";
 
 function NotFoundComponent() {
   return (
