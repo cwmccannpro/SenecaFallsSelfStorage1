@@ -603,7 +603,7 @@ function UnitSizing() {
         </div>
 
         {/* Floor plan + info panel */}
-        <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:items-start">
+        <div className="mt-8 grid gap-8 md:grid-cols-2 md:items-start">
 
           {/* SVG */}
           <div
@@ -751,7 +751,7 @@ function About() {
       className="py-12 sm:py-20 lg:py-28"
       style={{ background: 'linear-gradient(180deg, #4A0F14 0%, #3A0C11 100%)', borderTop: '2px solid #C78A3B', borderBottom: '2px solid #C78A3B' }}
     >
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center">
+      <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 md:grid-cols-2 md:items-center">
         <div>
           <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
             Why Us
@@ -1128,7 +1128,7 @@ function Contact() {
 
         <div className="mt-8 sm:mt-12 flex flex-col gap-8">
           {/* Top row: info box + form/success side by side */}
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-stretch">
+          <div className="grid gap-8 md:grid-cols-2 md:items-stretch">
             <div className="p-6" style={{ background: '#FDF8F0', border: '1px solid #D8C6AF' }}>
               <h3 style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: '1.2rem', fontWeight: 700 }}>Email or Call</h3>
               <ul className="mt-4 space-y-3">
