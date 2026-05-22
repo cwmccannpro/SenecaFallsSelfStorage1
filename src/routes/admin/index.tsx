@@ -55,7 +55,7 @@ function AdminOverview() {
   const totalUnits = Object.values(stats?.units ?? {}).reduce((a, b) => a + b, 0);
 
   return (
-    <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "2rem 1.5rem 4rem" }}>
+    <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "2rem 1.5rem 4rem", width: "100%" }}>
       <div style={{ marginBottom: "2rem" }}>
         <p style={LBL}>Administration</p>
         <h1 style={H1}>Overview</h1>

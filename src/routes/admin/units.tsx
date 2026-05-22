@@ -105,7 +105,7 @@ function AdminUnits() {
   if (loading) return <BodySpinner />;
 
   return (
-    <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "2rem 1.5rem 4rem" }}>
+    <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "2rem 1.5rem 4rem", width: "100%" }}>
       {/* Header */}
       <div
         style={{
@@ -154,7 +154,7 @@ function AdminUnits() {
       </div>
 
       {/* Table */}
-      <div style={{ background: "#FDF8F0", border: "1px solid #D8C6AF", overflow: "auto" }}>
+      <div style={{ background: "#FDF8F0", border: "1px solid #D8C6AF", overflow: "auto", width: "100%" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "650px" }}>
           <thead>
             <tr style={{ background: "#4A0F14" }}>

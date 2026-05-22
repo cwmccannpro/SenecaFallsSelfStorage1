@@ -46,7 +46,7 @@ export function AdminLayout() {
   if (loading) return <PageSpinner />;
 
   return (
-    <div style={{ minHeight: "100vh", background: "#F0EBE0", display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: "100vh", background: "#F0EBE0", display: "flex", flexDirection: "column", width: "100%", overflowX: "clip" }}>
       <AdminNav user={user} onSignOut={async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); }} />
       <Outlet />
     </div>
