@@ -411,7 +411,7 @@ function Features() {
     { icon: KeyRound, title: "24/7 Gate Access", desc: "Get in whenever you need to — your schedule, your storage." },
     { icon: ShieldCheck, title: "24-Hour Security", desc: "Sleep easy. Cameras and a secure perimeter gate watch over your belongings around the clock." },
     { icon: MoveVertical, title: "High Ceilings & Tall Units", desc: "Taller units mean you store more without paying for a bigger footprint — stack smart and save." },
-    { icon: Boxes, title: "Right Size for You", desc: "A range of sizes to fit anything from boxes to a 3-bedroom home." },
+    { icon: Boxes, title: "Pay Online, Anytime", desc: "Manage your account and pay your bill from your phone — no checks, no phone calls required." },
   ];
   return (
     <section
@@ -423,10 +423,10 @@ function Features() {
         <div className="mb-8 sm:mb-12 text-center">
           <div style={{ height: '1px', background: 'linear-gradient(to right, transparent, #C78A3B, transparent)', marginBottom: '1.5rem' }} />
           <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
-            Why Choose Us
+            Our Facility
           </span>
           <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 700, marginTop: '0.5rem' }}>
-            Built for the Way You Live
+            The Way Storage Should Be
           </h2>
           <div style={{ height: '1px', background: 'linear-gradient(to right, transparent, #C78A3B, transparent)', marginTop: '1.5rem' }} />
         </div>
