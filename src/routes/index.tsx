@@ -224,7 +224,7 @@ function TopNav() {
           <Wordmark />
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-7">
+          <nav className="hidden xl:flex items-center gap-7">
             {NAV.map((n) => (
               <NavLink key={n.label} href={n.href}>{n.label}</NavLink>
             ))}
@@ -252,7 +252,7 @@ function TopNav() {
             {/* Hamburger */}
             <button
               onClick={() => setOpen(o => !o)}
-              className="lg:hidden flex flex-col justify-center gap-[5px] w-9 h-9 p-1.5"
+              className="xl:hidden flex flex-col justify-center gap-[5px] w-9 h-9 p-1.5"
               aria-label={open ? 'Close menu' : 'Open menu'}
             >
               <span style={{
