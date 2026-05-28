@@ -1052,7 +1052,7 @@ function InquirySuccess({
 
 // Set this to your Formspree endpoint once you sign up at formspree.io
 // e.g. "https://formspree.io/f/xabc1234"
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/meednzla";
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xojbrpvw";
 
 function Contact() {
   const [submitting, setSubmitting] = useState(false);
