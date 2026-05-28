@@ -59,8 +59,11 @@ const S = {
   },
 };
 
+type View = "login" | "forgot" | "sent";
+
 function LoginPage() {
   const navigate = useNavigate();
+  const [view, setView] = useState<View>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -84,7 +87,7 @@ function LoginPage() {
 
   if (!ready) return <PageSpinner />;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -109,22 +112,120 @@ function LoginPage() {
     navigate({ to: admin ? "/admin" : "/dashboard" });
   };
 
+  const handleForgot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+
+    setLoading(false);
+    if (resetErr) {
+      setError(resetErr.message);
+      return;
+    }
+    setView("sent");
+  };
+
+  const pageHeader = (
+    <header style={{
+      background: "linear-gradient(180deg, #5C1219 0%, #4A0F14 100%)",
+      borderTop: "3px solid #C78A3B",
+      borderBottom: "2px solid #C78A3B",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "1.1rem 1.5rem",
+      boxShadow: "0 4px 24px rgba(30,4,8,0.5)",
+    }}>
+      <a href="/">
+        <img src={logoImg} alt="Seneca Falls Self Storage" style={{ height: "56px", width: "auto" }} />
+      </a>
+    </header>
+  );
+
+  if (view === "sent") {
+    return (
+      <div style={S.page}>
+        {pageHeader}
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2.5rem 1.5rem 3rem" }}>
+          <div style={S.wrap}>
+            <div style={{ ...S.card, textAlign: "center" }}>
+              <div style={{ width: "52px", height: "52px", borderRadius: "50%", background: "#C78A3B", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.25rem" }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FDF8F0" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+              </div>
+              <h1 style={{ ...S.h1, textAlign: "center" }}>Check your email</h1>
+              <p style={{ ...S.sub, textAlign: "center", marginBottom: "1.75rem" }}>
+                We sent a password reset link to <strong>{email}</strong>. Click the link in that email to set a new password.
+              </p>
+              <button
+                onClick={() => { setView("login"); setError(""); }}
+                className="btn-outline-gold"
+                style={{ width: "100%", justifyContent: "center" }}
+              >
+                Back to Sign In
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (view === "forgot") {
+    return (
+      <div style={S.page}>
+        {pageHeader}
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2.5rem 1.5rem 3rem" }}>
+          <div style={S.wrap}>
+            <div style={S.card}>
+              <h1 style={S.h1}>Reset Password</h1>
+              <p style={S.sub}>Enter your email and we'll send you a reset link</p>
+
+              {error && <div style={S.err}>{error}</div>}
+
+              <form onSubmit={handleForgot} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <div>
+                  <label style={S.label}>Email Address</label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    style={S.input}
+                    autoComplete="email"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-primary"
+                  style={{ width: "100%", justifyContent: "center", marginTop: "0.5rem", opacity: loading ? 0.7 : 1 }}
+                >
+                  {loading ? "Sending…" : "Send Reset Link"}
+                </button>
+              </form>
+
+              <p style={{ textAlign: "center", fontFamily: "'Cormorant Garamond', serif", color: "#7A5C4A", marginTop: "1.5rem", fontSize: "1.05rem" }}>
+                <button
+                  onClick={() => { setView("login"); setError(""); }}
+                  style={{ background: "none", border: "none", color: "#4A0F14", fontWeight: 700, textDecoration: "underline", cursor: "pointer", fontFamily: "'Cormorant Garamond', serif", fontSize: "1.05rem" }}
+                >
+                  ← Back to Sign In
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={S.page}>
-      <header style={{
-        background: "linear-gradient(180deg, #5C1219 0%, #4A0F14 100%)",
-        borderTop: "3px solid #C78A3B",
-        borderBottom: "2px solid #C78A3B",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "1.1rem 1.5rem",
-        boxShadow: "0 4px 24px rgba(30,4,8,0.5)",
-      }}>
-        <a href="/">
-          <img src={logoImg} alt="Seneca Falls Self Storage" style={{ height: "56px", width: "auto" }} />
-        </a>
-      </header>
+      {pageHeader}
 
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2.5rem 1.5rem 3rem" }}>
       <div style={S.wrap}>
@@ -135,7 +236,7 @@ function LoginPage() {
           {error && <div style={S.err}>{error}</div>}
 
           <form
-            onSubmit={handleSubmit}
+            onSubmit={handleSignIn}
             style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
           >
             <div>
@@ -150,7 +251,16 @@ function LoginPage() {
               />
             </div>
             <div>
-              <label style={S.label}>Password</label>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.35rem" }}>
+                <label style={{ ...S.label, marginBottom: 0 }}>Password</label>
+                <button
+                  type="button"
+                  onClick={() => { setView("forgot"); setError(""); }}
+                  style={{ background: "none", border: "none", color: "#C78A3B", fontFamily: "'Cormorant Garamond', serif", fontSize: "0.95rem", fontWeight: 600, cursor: "pointer", padding: 0 }}
+                >
+                  Forgot password?
+                </button>
+              </div>
               <input
                 type="password"
                 required

@@ -75,7 +75,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Seneca Falls Self Storage — Secure, Accessible, Affordable" },
-      { name: "description", content: "Locally owned self storage in Seneca Falls, NY. 24/7 gate access, monitored security, tall units. Units from $65/mo. First month FREE." },
+      { name: "description", content: "Locally owned self storage in Seneca Falls, NY. 24/7 access, monitored security, 12-foot ceilings. Units from $65/mo. First month FREE." },
       { property: "og:title", content: "Seneca Falls Self Storage" },
       { property: "og:description", content: "Secure. Accessible. Affordable. Self storage on Route 414 in Seneca Falls, NY." },
       { property: "og:type", content: "website" },

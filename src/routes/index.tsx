@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import heroImg from "@/assets/hero-storage.png";
 import logoImg from "@/assets/logo4.png";
+import faviconImg from "@/assets/favicon.png";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -408,9 +409,9 @@ function Hero() {
 
 function Features() {
   const items = [
-    { icon: KeyRound, title: "24/7 Gate Access", desc: "Get in whenever you need to — your schedule, your storage." },
-    { icon: ShieldCheck, title: "24-Hour Security", desc: "Sleep easy. Cameras and a secure perimeter gate watch over your belongings around the clock." },
-    { icon: MoveVertical, title: "High Ceilings & Tall Units", desc: "Taller units mean you store more without paying for a bigger footprint — stack smart and save." },
+    { icon: KeyRound, title: "24/7 Access", desc: "Get in whenever you need to — your schedule, your storage." },
+    { icon: ShieldCheck, title: "24-Hour Security", desc: "Sleep easy. Cameras and a secure perimeter watch over your belongings around the clock." },
+    { icon: MoveVertical, title: "12-Foot Ceilings & Tall Units", desc: "12-foot ceilings mean you store more without paying for a bigger footprint — stack smart and save." },
     { icon: Boxes, title: "Pay Online, Anytime", desc: "Manage your account and pay your bill from your phone — no checks, no phone calls required." },
   ];
   return (
@@ -627,7 +628,7 @@ function UnitSizing() {
               </div>
             </div>
 
-            <div style={{ height: '1px', width: '60px', background: '#C78A3B', marginLeft: 'auto', marginRight: 'auto' }} className="lg:mx-0" />
+            <div style={{ height: '1px', width: '60px', background: '#C78A3B' }} className="mx-auto lg:mx-0" />
 
             <div>
               <div style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: '1rem', fontWeight: 700, marginBottom: '0.75rem' }}>
@@ -741,7 +742,7 @@ function Pricing() {
 function About() {
   const points = [
     "Tall units for extra vertical storage",
-    "Easy 24/7 gate access",
+    "Easy 24/7 access",
     "Monitored security",
     "Flexible month-to-month rentals",
   ];
@@ -802,22 +803,22 @@ const REVIEWS = [
     text: "Rented a unit to store a vehicle, Tim was great, all went according to plan. No issues.",
   },
   {
-    name: "Eileen Dyson",
-    location: "Google Review",
-    rating: 5,
-    text: "Clean units. Very pleased with the service.",
-  },
-  {
     name: "Mike T.",
     location: "Seneca Falls, NY",
     rating: 5,
     text: "Best storage facility in the area. Clean, secure, and the 24/7 access is a game changer. I've used other places and nothing compares — this one actually feels like they care about your stuff.",
   },
   {
+    name: "Eileen Dyson",
+    location: "Google Review",
+    rating: 5,
+    text: "Clean units. Very pleased with the service.",
+  },
+  {
     name: "Linda R.",
     location: "Waterloo, NY",
     rating: 5,
-    text: "I was nervous about storing my mother's belongings after she passed, but the staff here were so kind and professional. The units are spotless and the gate system made me feel at ease. Highly recommend.",
+    text: "I was nervous about storing my mother's belongings after she passed, but the staff here were so kind and professional. The units are spotless and the 24/7 access made me feel at ease. Highly recommend.",
   },
 ];
 
@@ -930,23 +931,12 @@ function InquirySuccess({
         gap: "1rem",
       }}
     >
-      {/* Gold circle check */}
-      <div
-        style={{
-          width: "56px",
-          height: "56px",
-          borderRadius: "50%",
-          background: "rgba(199,138,59,0.12)",
-          border: "2px solid #C78A3B",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: "1.4rem",
-          color: "#C78A3B",
-        }}
-      >
-        ✦
-      </div>
+      {/* Favicon icon */}
+      <img
+        src={faviconImg}
+        alt=""
+        style={{ width: "56px", height: "56px", objectFit: "contain" }}
+      />
 
       {/* Eyebrow */}
       <p
@@ -1062,7 +1052,7 @@ function InquirySuccess({
 
 // Set this to your Formspree endpoint once you sign up at formspree.io
 // e.g. "https://formspree.io/f/xabc1234"
-const FORMSPREE_ENDPOINT = "";
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/meednzla";
 
 function Contact() {
   const [submitting, setSubmitting] = useState(false);

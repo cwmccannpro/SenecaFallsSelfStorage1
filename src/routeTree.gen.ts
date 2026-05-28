@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PaymentSuccessRouteImport } from './routes/payment-success'
 import { Route as LoginRouteImport } from './routes/login'
@@ -20,6 +21,11 @@ import { Route as AdminUnitsRouteImport } from './routes/admin/units'
 import { Route as AdminPaymentLinksRouteImport } from './routes/admin/payment-links'
 import { Route as AdminCustomersRouteImport } from './routes/admin/customers'
 
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/payment-success': typeof PaymentSuccessRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/payment-links': typeof AdminPaymentLinksRoute
   '/admin/units': typeof AdminUnitsRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/payment-success': typeof PaymentSuccessRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/payment-links': typeof AdminPaymentLinksRoute
   '/admin/units': typeof AdminUnitsRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/payment-success': typeof PaymentSuccessRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/payment-links': typeof AdminPaymentLinksRoute
   '/admin/units': typeof AdminUnitsRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/payment-success'
     | '/register'
+    | '/reset-password'
     | '/admin/customers'
     | '/admin/payment-links'
     | '/admin/units'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/payment-success'
     | '/register'
+    | '/reset-password'
     | '/admin/customers'
     | '/admin/payment-links'
     | '/admin/units'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/payment-success'
     | '/register'
+    | '/reset-password'
     | '/admin/customers'
     | '/admin/payment-links'
     | '/admin/units'
@@ -152,10 +164,18 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PaymentSuccessRoute: typeof PaymentSuccessRoute
   RegisterRoute: typeof RegisterRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register': {
       id: '/register'
       path: '/register'
@@ -252,6 +272,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PaymentSuccessRoute: PaymentSuccessRoute,
   RegisterRoute: RegisterRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

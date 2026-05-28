@@ -116,29 +116,24 @@ function DashboardPage() {
       <header
         style={{
           background: "linear-gradient(180deg, #5C1219 0%, #4A0F14 100%)",
+          borderTop: "3px solid #C78A3B",
           borderBottom: "2px solid #C78A3B",
-          padding: "0 1.5rem",
         }}
       >
         <div
-          style={{
-            maxWidth: "900px",
-            margin: "0 auto",
-            height: "64px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
+          style={{ maxWidth: "900px", margin: "0 auto" }}
+          className="relative flex items-center justify-center py-[1.1rem] px-6 md:justify-between md:h-16 md:py-0"
         >
           <a href="/">
             <img
               src={logoImg}
               alt="Seneca Falls Self Storage"
-              style={{ height: "40px", width: "auto" }}
+              className="h-14 w-auto md:h-10"
             />
           </a>
           <button
             onClick={handleSignOut}
+            className="absolute right-6 md:static"
             style={{
               display: "flex",
               alignItems: "center",
@@ -473,25 +468,6 @@ function ActiveState({
         </div>
       </div>
 
-      <div
-        style={{
-          background: "#4A0F14",
-          border: "1px solid #C78A3B",
-          padding: "1rem 1.5rem",
-          textAlign: "center",
-        }}
-      >
-        <p
-          style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            color: "#F4E9D8",
-            fontSize: "1rem",
-            margin: 0,
-          }}
-        >
-          ✦ Pay annually and get one month FREE — contact us to set it up. ✦
-        </p>
-      </div>
     </div>
   );
 }
