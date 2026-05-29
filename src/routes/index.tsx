@@ -24,6 +24,7 @@ import {
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { z } from "zod";
+import emailjs from "@emailjs/browser";
 import heroImg from "@/assets/hero-storage.png";
 import logoImg from "@/assets/logo4.png";
 import faviconImg from "@/assets/favicon.png";
@@ -134,6 +135,7 @@ function Index() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <TopNav />
+      <div className="h-[68px] lg:h-[84px]" />
       <Hero />
       <Features />
       <UnitSizing />
@@ -209,7 +211,7 @@ function TopNav() {
   return (
     <header
       id="top"
-      className="sticky top-0 z-50"
+      className="fixed top-0 left-0 right-0 z-50"
       style={{
         background: 'linear-gradient(180deg, #5C1219 0%, #4A0F14 45%, #3A0C11 100%)',
         borderTop: '2px solid #C78A3B',
@@ -1050,9 +1052,9 @@ function InquirySuccess({
   );
 }
 
-// Set this to your Formspree endpoint once you sign up at formspree.io
-// e.g. "https://formspree.io/f/xabc1234"
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/xojbrpvw";
+const EMAILJS_SERVICE_ID = "service_bs0jee3";
+const EMAILJS_TEMPLATE_ID = "template_xucae0r";
+const EMAILJS_PUBLIC_KEY = "__PjBvNitw59O6Kq6";
 
 function Contact() {
   const [submitting, setSubmitting] = useState(false);
@@ -1075,27 +1077,26 @@ function Contact() {
     }
     setSubmitting(true);
 
-    if (FORMSPREE_ENDPOINT) {
-      const res = await fetch(FORMSPREE_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          name: parsed.data.name,
-          email: parsed.data.email,
-          phone: parsed.data.phone,
-          unit_size: parsed.data.unitSize,
-          message: parsed.data.message ?? "",
-        }),
-      });
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_name: parsed.data.name,
+          reply_to: parsed.data.email,
+          phone: parsed.data.phone ?? "Not provided",
+          unit_size: parsed.data.unitSize === "not-sure" ? "Not sure yet" : parsed.data.unitSize,
+          message: parsed.data.message || "No message provided",
+        },
+        { publicKey: EMAILJS_PUBLIC_KEY }
+      );
+    } catch {
       setSubmitting(false);
-      if (!res.ok) {
-        toast.error(`Something went wrong. Please call us at ${PHONE_DISPLAY}.`);
-        return;
-      }
-    } else {
-      await new Promise((r) => setTimeout(r, 500));
-      setSubmitting(false);
+      toast.error(`Something went wrong. Please call us at ${PHONE_DISPLAY}.`);
+      return;
     }
+
+    setSubmitting(false);
 
     setSubmitted({ name: parsed.data.name, unitSize: parsed.data.unitSize });
   };
