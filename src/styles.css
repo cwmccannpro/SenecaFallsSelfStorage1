@@ -66,14 +66,18 @@
   display: block;
   width: 100%;
   object-fit: cover;
-  object-position: center 8%; /* keeps sign + units visible on mobile */
-  max-height: 340px;
+  object-position: center 200%;
+  max-height: 440px;
+  -webkit-mask-image: linear-gradient(to bottom, black 35%, transparent 82%);
+  mask-image: linear-gradient(to bottom, black 35%, transparent 82%);
 }
 
 @media (min-width: 640px) {
   .hero-img {
-    max-height: 560px;
-    object-position: center top;
+    max-height: 580px;
+    object-position: center 58%;
+    -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 88%);
+    mask-image: linear-gradient(to bottom, black 50%, transparent 88%);
   }
 }
 
@@ -88,9 +92,9 @@
   background-color: #4A0F14;
   color: #F4E9D8;
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 0.72rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
@@ -126,9 +130,9 @@
   background-color: transparent;
   color: #E0A34A;
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 0.72rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
   transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
@@ -163,9 +167,9 @@
   background-color: #4A0F14;
   color: #F4E9D8;
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
   transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
@@ -195,9 +199,9 @@
   background-color: #C78A3B;
   color: #2A1412;
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
   transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
@@ -227,9 +231,9 @@
   background-color: transparent;
   color: #4A0F14;
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
   transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;

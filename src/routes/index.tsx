@@ -25,7 +25,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { z } from "zod";
 import emailjs from "@emailjs/browser";
-import heroImg from "@/assets/hero-storage.png";
+import heroImg from "@/assets/Hero.png";
 import logoImg from "@/assets/logo4.png";
 import faviconImg from "@/assets/favicon.png";
 
@@ -38,7 +38,8 @@ const ADDRESS = "189 Ovid St, Seneca Falls, NY 13148";
 const PHONE_DISPLAY = "(315) 539-4692";
 const PHONE_HREF = "tel:+13155394692";
 const EMAIL = "tim@senecafallsselfstorage.com";
-const MAP_EMBED = `https://www.google.com/maps?q=${encodeURIComponent(ADDRESS)}&output=embed`;
+const MAP_EMBED = `https://www.google.com/maps?q=42.895932,-76.798644&output=embed`;
+const MAP_LINK = "https://www.google.com/maps/place/Seneca+Falls+Self+Storage+LLC/@42.9160559,-76.8080464,14z/data=!4m10!1m2!2m1!1sseneca+falls+self+storage!3m6!1s0x89d0b7b99fb065c7:0xf507e8a07fc5c869!8m2!3d42.895932!4d-76.798644!15sChlzZW5lY2EgZmFsbHMgc2VsZiBzdG9yYWdlWhsiGXNlbmVjYSBmYWxscyBzZWxmIHN0b3JhZ2WSARVzZWxmX3N0b3JhZ2VfZmFjaWxpdHmaASRDaGREU1VoTk1HOW5TMFZKUTBGblNVTnViV0YyU201blJSQULgAQD6AQQIABBM!16s%2Fg%2F1tfrsxj1?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D";
 
 const NAV = [
   { label: "Home", href: "#top" },
@@ -135,7 +136,7 @@ function Index() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <TopNav />
-      <div className="h-[68px] lg:h-[84px]" />
+      <div className="h-[116px] sm:h-[80px] lg:h-[112px]" />
       <Hero />
       <Features />
       <UnitSizing />
@@ -156,7 +157,9 @@ function smoothScrollTo(href: string) {
   } else {
     const el = document.getElementById(id);
     if (el) {
-      const navH = document.querySelector('header')?.getBoundingClientRect().height ?? 80;
+      const header = document.querySelector('header');
+      const mobileMenu = document.querySelector('[data-mobile-menu]');
+      const navH = (header?.getBoundingClientRect().height ?? 116) - (mobileMenu?.getBoundingClientRect().height ?? 0);
       let top = el.getBoundingClientRect().top + window.scrollY - navH;
       if (id === 'unit-sizes') {
         const label = document.getElementById('unit-sizes-label');
@@ -172,7 +175,7 @@ function smoothScrollTo(href: string) {
 function Wordmark({ className = "" }: { className?: string }) {
   return (
     <a href="#top" onClick={e => { e.preventDefault(); smoothScrollTo('#top'); }} className={`flex items-center flex-none ${className}`} aria-label="Seneca Falls Self Storage">
-      <img src={logoImg} alt="Seneca Falls Self Storage" className="h-10 sm:h-12 lg:h-14 w-auto" />
+      <img src={logoImg} alt="Seneca Falls Self Storage" className="h-14 sm:h-16 lg:h-20 w-auto" />
     </a>
   );
 }
@@ -185,9 +188,9 @@ function NavLink({ href, children, onClick }: { href: string; children: React.Re
       style={{
         fontFamily: "'Cormorant Garamond', Georgia, serif",
         color: '#D8C6AF',
-        fontSize: '0.78rem',
-        fontWeight: 600,
-        letterSpacing: '0.13em',
+        fontSize: '0.95rem',
+        fontWeight: 700,
+        letterSpacing: '0.12em',
         textTransform: 'uppercase' as const,
         transition: 'color 0.2s ease, text-shadow 0.2s ease',
       }}
@@ -215,16 +218,20 @@ function TopNav() {
       style={{
         background: 'linear-gradient(180deg, #5C1219 0%, #4A0F14 45%, #3A0C11 100%)',
         borderTop: '2px solid #C78A3B',
-        borderBottom: '2px solid #C78A3B',
         boxShadow: '0 4px 32px rgba(30, 4, 8, 0.7), inset 0 1px 0 rgba(224, 163, 74, 0.12)',
       }}
     >
       {/* Main bar */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex h-16 lg:h-20 items-center justify-between gap-6">
+        <div className="relative flex h-20 lg:h-28 items-center justify-between gap-6">
 
-          {/* Logo */}
-          <Wordmark />
+          {/* Mobile left spacer — mirrors hamburger width so logo centers perfectly */}
+          <div className="xl:hidden flex-none w-9 h-9" />
+
+          {/* Logo — absolute center on mobile, static left on desktop */}
+          <div className="absolute left-1/2 -translate-x-1/2 xl:static xl:left-auto xl:translate-x-0">
+            <Wordmark />
+          </div>
 
           {/* Desktop nav */}
           <nav className="hidden xl:flex items-center gap-7">
@@ -242,14 +249,6 @@ function TopNav() {
               className="btn-nav-primary"
             >
               Check Availability
-            </a>
-
-            {/* Pay Online — always visible */}
-            <a
-              href="/login"
-              className="btn-nav-gold"
-            >
-              Pay Online
             </a>
 
             {/* Hamburger */}
@@ -278,8 +277,39 @@ function TopNav() {
         </div>
       </div>
 
+      {/* Decorative bottom stroke — width of address text, fading ends */}
+      <div className="flex justify-center">
+        <div style={{
+          height: '1px',
+          width: '15rem',
+          background: 'linear-gradient(to right, transparent, #C78A3B 22%, #C78A3B 78%, transparent)',
+        }} />
+      </div>
+
+      {/* Address banner — mobile only, hidden when menu is open */}
+      <div className="sm:hidden">
+          <a
+            href={MAP_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold uppercase w-full"
+            style={{
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              letterSpacing: '0.15em',
+              color: '#F4E9D8',
+              background: 'transparent',
+              borderBottom: '2px solid #C78A3B',
+              textDecoration: 'none',
+            }}
+          >
+            <MapPin className="h-3.5 w-3.5 flex-none" style={{ color: '#C78A3B' }} />
+            189 Ovid St, Seneca Falls, NY
+          </a>
+        </div>
+
       {/* Mobile slide-down menu */}
       <div
+        data-mobile-menu
         style={{
           maxHeight: open ? '480px' : '0',
           overflow: 'hidden',
@@ -291,33 +321,20 @@ function TopNav() {
         <nav className="mx-auto max-w-7xl px-6 py-4 flex flex-col">
           {NAV.map((n) => (
             <NavLink key={n.label} href={n.href} onClick={() => setOpen(false)}>
-              <span className="block py-3.5 border-b" style={{ borderColor: 'rgba(199, 138, 59, 0.2)' }}>
+              <span className="block py-4 border-b" style={{ borderColor: 'rgba(199, 138, 59, 0.2)' }}>
                 {n.label}
               </span>
             </NavLink>
           ))}
           <div className="mt-5 flex flex-col gap-3 pb-2">
-            <a
-              href={PHONE_HREF}
-              className="flex items-center gap-2"
-              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: '#D8C6AF', fontWeight: 600, fontSize: '1rem' }}
-            >
-              <Phone className="h-4 w-4" style={{ color: '#C78A3B' }} />
+            <a href={PHONE_HREF} className="btn-primary w-full justify-center">
+              <Phone className="h-4 w-4" />
               {PHONE_DISPLAY}
             </a>
             <a
               href="#availability-form"
               onClick={e => { e.preventDefault(); smoothScrollTo('#availability-form'); setOpen(false); }}
-              className="flex items-center justify-center py-3 text-xs uppercase"
-              style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontWeight: 700,
-                letterSpacing: '0.15em',
-                color: '#E0A34A',
-                border: '1px solid #C78A3B',
-                borderRadius: '2px',
-                background: 'rgba(199, 138, 59, 0.09)',
-              }}
+              className="btn-gold w-full justify-center"
             >
               Check Availability
             </a>
@@ -330,17 +347,26 @@ function TopNav() {
 
 function Hero() {
   return (
-    <section style={{ background: 'linear-gradient(180deg, #F4E9D8 0%, #EDE0C8 100%)' }}>
+    <section style={{ background: '#3A0C11', position: 'relative', overflow: 'hidden' }}>
 
-      {/* ── Full-bleed image flush against navbar ── */}
-      <div className="relative" style={{ borderBottom: '2px solid #C78A3B' }}>
+      {/* ── Full-bleed image ── */}
+      <div className="relative">
         <img
           src={heroImg}
           alt="Seneca Falls Self Storage facility on Route 414 — three buildings of red-door units"
           className="hero-img"
         />
-        {/* Badge overlaid centered near top of image */}
-        <div className="absolute top-5 sm:top-8 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap">
+        {/* Gradient scrim — image only */}
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          height: '72%',
+          background: 'linear-gradient(to top, rgba(58,12,17,0.96) 0%, rgba(58,12,17,0.6) 45%, rgba(58,12,17,0.0) 100%)',
+          zIndex: 2,
+          pointerEvents: 'none',
+        }} />
+
+        {/* Address badge — desktop only (mobile version lives in the fixed header) */}
+        <div className="absolute hidden sm:block top-8 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap">
           <span
             className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase"
             style={{
@@ -357,55 +383,83 @@ function Hero() {
           </span>
         </div>
 
-        {/* Phone badge centered at bottom of image */}
-        <div className="absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap">
-          <a
-            href={PHONE_HREF}
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase"
-            style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              letterSpacing: '0.15em',
-              color: '#F4E9D8',
-              background: 'rgba(74, 15, 20, 0.72)',
-              border: '1px solid #C78A3B',
-              backdropFilter: 'blur(4px)',
-              textDecoration: 'none',
-              transition: 'background 0.2s ease, color 0.2s ease',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(74,15,20,0.9)'; e.currentTarget.style.color = '#E0A34A'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(74,15,20,0.72)'; e.currentTarget.style.color = '#F4E9D8'; }}
-          >
-            <Phone className="h-3.5 w-3.5 flex-none" style={{ color: '#C78A3B' }} />
-            {PHONE_DISPLAY}
-          </a>
-        </div>
       </div>
 
-      {/* ── Below-image content ── */}
-      <div className="text-center px-4 sm:px-6 pt-6 sm:pt-10 pb-10 sm:pb-16">
-        <div className="flex items-center justify-center gap-3 max-w-lg mx-auto">
-          <div style={{ height: '1px', flex: 1, background: 'linear-gradient(to right, transparent, #C78A3B)' }} />
-          <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: '#7A4A20', fontSize: '1.2rem', fontWeight: 600, fontStyle: 'italic' }}>
-            Your Stuff. Safe. Yours to Access Anytime.
+      {/* ── Content ── */}
+      <div className="-mt-[180px] sm:-mt-28 relative z-10 text-center px-4 sm:px-6 pt-2 sm:pt-0 pb-8 sm:pb-10">
+
+        {/* Hero text hierarchy */}
+        <div className="max-w-lg mx-auto mb-5 sm:mb-8">
+
+          {/* Headline */}
+          <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '42px', fontWeight: 800, fontStyle: 'normal', lineHeight: 1.1, color: '#F4E9D8', textShadow: '0 2px 10px rgba(20,6,4,0.65)', margin: '0 0 8px 0' }}>
+            Store It Here.<br />Rest Easy.
           </p>
-          <div style={{ height: '1px', flex: 1, background: 'linear-gradient(to left, transparent, #C78A3B)' }} />
+
+          {/* Subheadline */}
+          <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '15px', fontWeight: 500, fontStyle: 'italic', color: 'rgba(244,233,216,0.80)', textShadow: '0 1px 5px rgba(20,6,4,0.55)', margin: 0 }}>
+            24/7 access. No contracts. Locally owned.
+          </p>
+
         </div>
 
-        <p className="mt-4 mx-auto max-w-xl" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: '#5C3A28', fontSize: '1.1rem', lineHeight: '1.75' }}>
-          Clean units, 24/7 access, and monitored security — no corporate hassle, just straightforward storage from a neighbor you can call.
-        </p>
-
-        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a href="#contact" onClick={e => { e.preventDefault(); smoothScrollTo('#contact'); }} className="btn-primary w-full sm:w-auto justify-center">
+        {/* CTAs */}
+        <div className="mt-7 sm:mt-0 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+          <a href="#contact" onClick={e => { e.preventDefault(); smoothScrollTo('#contact'); }} className="btn-gold w-full sm:w-auto justify-center">
             Check Availability <ArrowRight className="h-4 w-4" />
           </a>
-          <a href="#pricing" onClick={e => { e.preventDefault(); smoothScrollTo('#pricing'); }} className="btn-outline-gold w-full sm:w-auto justify-center">
+          <a href="#pricing" onClick={e => { e.preventDefault(); smoothScrollTo('#pricing'); }} className="btn-primary w-full sm:w-auto justify-center">
             View Pricing
           </a>
         </div>
+
+        <a
+          href={PHONE_HREF}
+          className="mt-8 inline-flex items-center justify-center gap-2"
+          style={{
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            color: '#F4E9D8',
+            fontSize: '1.35rem',
+            fontWeight: 600,
+            letterSpacing: '0.06em',
+            textDecoration: 'none',
+            transition: 'color 0.2s ease',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#E0A34A'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = '#F4E9D8'; }}
+        >
+          <Phone className="h-5 w-5 flex-none" style={{ color: '#C78A3B' }} />
+          {PHONE_DISPLAY}
+        </a>
       </div>
 
     </section>
+  );
+}
+
+function PhoneBanner() {
+  return (
+    <div style={{ background: 'linear-gradient(180deg, #3A0C11 0%, #4A0F14 100%)' }}>
+      {/* Gradient bridge — tall fade zone before phone text */}
+      <div style={{ height: '60px', background: 'linear-gradient(180deg, #3A0C11 0%, #3E0D12 100%)' }} />
+      <a
+        href={PHONE_HREF}
+        className="flex items-center justify-center gap-2 w-full py-3 text-xs font-semibold uppercase"
+        style={{
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          letterSpacing: '0.15em',
+          color: '#F4E9D8',
+          textDecoration: 'none',
+          transition: 'color 0.2s ease',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.color = '#E0A34A'; }}
+        onMouseLeave={e => { e.currentTarget.style.color = '#F4E9D8'; }}
+      >
+        <Phone className="h-3.5 w-3.5 flex-none" style={{ color: '#C78A3B' }} />
+        {PHONE_DISPLAY}
+      </a>
+      <div style={{ height: '20px' }} />
+    </div>
   );
 }
 
@@ -414,7 +468,7 @@ function Features() {
     { icon: KeyRound, title: "24/7 Access", desc: "Get in whenever you need to — your schedule, your storage." },
     { icon: ShieldCheck, title: "24-Hour Security", desc: "Sleep easy. Cameras and a secure perimeter watch over your belongings around the clock." },
     { icon: MoveVertical, title: "12-Foot Ceilings & Tall Units", desc: "12-foot ceilings mean you store more without paying for a bigger footprint — stack smart and save." },
-    { icon: Boxes, title: "Pay Online, Anytime", desc: "Manage your account and pay your bill from your phone — no checks, no phone calls required." },
+    { icon: Boxes, title: "No Long-Term Contracts", desc: "Rent month-to-month and move out when you're ready — no penalties, no pressure." },
   ];
   return (
     <section
@@ -424,11 +478,10 @@ function Features() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mb-8 sm:mb-12 text-center">
-          <div style={{ height: '1px', background: 'linear-gradient(to right, transparent, #C78A3B, transparent)', marginBottom: '1.5rem' }} />
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
             Our Facility
           </span>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 700, marginTop: '0.5rem' }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontSize: 'clamp(2rem, 4.5vw, 2.875rem)', fontWeight: 700, marginTop: '0.5rem' }}>
             The Way Storage Should Be
           </h2>
           <div style={{ height: '1px', background: 'linear-gradient(to right, transparent, #C78A3B, transparent)', marginTop: '1.5rem' }} />
@@ -448,10 +501,10 @@ function Features() {
               >
                 <Icon className="h-5 w-5" style={{ color: '#E0A34A' }} />
               </div>
-              <h3 className="mt-4 text-lg font-bold" style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8' }}>
+              <h3 className="mt-4 text-xl font-bold" style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8' }}>
                 {title}
               </h3>
-              <p className="mt-2" style={{ fontFamily: "'Cormorant Garamond', serif", color: '#D8C6AF', fontSize: '1.05rem', lineHeight: '1.65' }}>
+              <p className="mt-2" style={{ fontFamily: "'Cormorant Garamond', serif", color: '#D8C6AF', fontSize: '1.15rem', lineHeight: '1.65' }}>
                 {desc}
               </p>
             </div>
@@ -562,14 +615,14 @@ function UnitSizing() {
 
         {/* Header */}
         <div className="max-w-2xl mx-auto text-center">
-          <span id="unit-sizes-label" style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+          <span id="unit-sizes-label" style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
             Unit Sizes
           </span>
-          <h2 id="unit-sizes-heading" style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 700, marginTop: '0.4rem' }}>
+          <h2 id="unit-sizes-heading" style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: 'clamp(2rem, 4.5vw, 2.875rem)', fontWeight: 700, marginTop: '0.4rem' }}>
             Find Your Perfect Fit
           </h2>
           <div style={{ height: '1px', width: '72px', background: '#C78A3B', marginTop: '1rem', marginBottom: '0.75rem', marginLeft: 'auto', marginRight: 'auto' }} />
-          <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#5C3A28', fontSize: '1.05rem', lineHeight: '1.7' }}>
+          <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#5C3A28', fontSize: '1.15rem', lineHeight: '1.7' }}>
             Select a size to see a floor plan and what fits inside. All dimensions shown to scale.
           </p>
         </div>
@@ -594,7 +647,7 @@ function UnitSizing() {
                 }} />
                 <span style={{
                   fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: '0.78rem', fontWeight: 700,
+                  fontSize: '0.92rem', fontWeight: 700,
                   color: active === i ? '#2A1412' : '#7A4A20',
                   letterSpacing: '0.06em',
                 }}>
@@ -619,13 +672,13 @@ function UnitSizing() {
           {/* Info */}
           <div className="flex flex-col gap-6 text-center lg:text-left">
             <div>
-              <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+              <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
                 Unit Size
               </span>
               <h3 style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: '2rem', fontWeight: 700, marginTop: '0.2rem' }}>
                 {unit.label}
               </h3>
-              <div style={{ fontFamily: "'Cormorant Garamond', serif", color: '#7A4A20', fontSize: '1.1rem', marginTop: '0.15rem' }}>
+              <div style={{ fontFamily: "'Cormorant Garamond', serif", color: '#7A4A20', fontSize: '1.25rem', marginTop: '0.15rem' }}>
                 {unit.sqft} sq ft
               </div>
             </div>
@@ -633,7 +686,7 @@ function UnitSizing() {
             <div style={{ height: '1px', width: '60px', background: '#C78A3B' }} className="mx-auto lg:mx-0" />
 
             <div>
-              <div style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: '1rem', fontWeight: 700, marginBottom: '0.75rem' }}>
+              <div style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.75rem' }}>
                 What fits inside:
               </div>
               <ul className="space-y-2.5 inline-block text-left">
@@ -643,7 +696,7 @@ function UnitSizing() {
                       style={{ background: 'rgba(199,138,59,0.18)', border: '1px solid rgba(199,138,59,0.45)' }}>
                       <Check className="h-3.5 w-3.5" style={{ color: '#E0A34A' }} />
                     </span>
-                    <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#3A1A12', fontSize: '1.05rem' }}>
+                    <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#3A1A12', fontSize: '1.15rem' }}>
                       {item}
                     </span>
                   </li>
@@ -652,7 +705,7 @@ function UnitSizing() {
             </div>
 
             <div>
-              <div style={{ fontFamily: "'Cormorant Garamond', serif", color: '#7A4A20', fontSize: '0.78rem', textTransform: 'uppercase' as const, letterSpacing: '0.15em' }}>
+              <div style={{ fontFamily: "'Cormorant Garamond', serif", color: '#7A4A20', fontSize: '0.92rem', textTransform: 'uppercase' as const, letterSpacing: '0.15em' }}>
                 Starting at
               </div>
               <div className="flex items-baseline justify-center lg:justify-start gap-1 mt-1 mb-4">
@@ -682,14 +735,14 @@ function Pricing() {
     <section id="pricing" className="py-12 sm:py-20 lg:py-28" style={{ background: 'linear-gradient(160deg, #FDF8F0 0%, #F4E9D8 100%)' }}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-2xl">
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
             Storage Units
           </span>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 700, marginTop: '0.4rem' }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: 'clamp(2rem, 4.5vw, 2.875rem)', fontWeight: 700, marginTop: '0.4rem' }}>
             Simple, Honest Pricing
           </h2>
           <div style={{ height: '1px', width: '72px', background: '#C78A3B', marginTop: '1rem', marginBottom: '0.75rem' }} />
-          <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#5C3A28', fontSize: '1.05rem', lineHeight: '1.7' }}>
+          <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#5C3A28', fontSize: '1.15rem', lineHeight: '1.7' }}>
             Month-to-month rentals. No hidden fees. Pick the size that fits — upgrade or downsize anytime.
           </p>
         </div>
@@ -712,14 +765,14 @@ function Pricing() {
                   Most Popular
                 </span>
               )}
-              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', color: u.popular ? '#D8C6AF' : '#7A4A20' }}>
+              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', color: u.popular ? '#D8C6AF' : '#7A4A20' }}>
                 {u.size}
               </div>
               <div className="mt-3 flex items-baseline gap-1">
                 <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '2.5rem', fontWeight: 800, color: u.popular ? '#F4E9D8' : '#2A1412' }}>${u.price}</span>
                 <span style={{ fontFamily: "'Cormorant Garamond', serif", color: u.popular ? '#D8C6AF' : '#7A4A20', fontSize: '1rem' }}>/mo</span>
               </div>
-              <p className="mt-3 flex-1" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1rem', color: u.popular ? '#D8C6AF' : '#5C3A28' }}>
+              <p className="mt-3 flex-1" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', color: u.popular ? '#D8C6AF' : '#5C3A28' }}>
                 {u.fits}
               </p>
               <a href="#contact" onClick={e => { e.preventDefault(); smoothScrollTo('#contact'); }} className={`mt-6 justify-center ${u.popular ? 'btn-gold' : 'btn-primary'}`}>
@@ -732,7 +785,7 @@ function Pricing() {
           className="mt-10 px-6 py-5 text-center"
           style={{ background: '#4A0F14', border: '1px solid #C78A3B' }}
         >
-          <p style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontSize: '1.1rem', fontWeight: 700 }}>
+          <p style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontSize: '1.25rem', fontWeight: 700 }}>
             ✦ Pay Annually. Get One Month FREE. ✦
           </p>
         </div>
@@ -756,14 +809,14 @@ function About() {
     >
       <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 md:grid-cols-2 md:items-center">
         <div>
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
             Why Us
           </span>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 700, marginTop: '0.4rem', lineHeight: 1.2 }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontSize: 'clamp(2rem, 4.5vw, 2.875rem)', fontWeight: 700, marginTop: '0.4rem', lineHeight: 1.2 }}>
             Locally Owned.<br />Built for the Finger Lakes.
           </h2>
           <div style={{ height: '1px', width: '60px', background: '#C78A3B', margin: '1.1rem 0' }} />
-          <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#D8C6AF', fontSize: '1.1rem', lineHeight: '1.8' }}>
+          <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#D8C6AF', fontSize: '1.25rem', lineHeight: '1.8' }}>
             Family-owned and right in your backyard. We built this place the way we'd want storage for our own family — clean, secure, and easy to use. No corporate runaround. When you call, you reach a real person.
           </p>
           <ul className="mt-6 space-y-3">
@@ -775,7 +828,7 @@ function About() {
                 >
                   <Check className="h-3.5 w-3.5" style={{ color: '#E0A34A' }} />
                 </span>
-                <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#D8C6AF', fontSize: '1.05rem' }}>{p}</span>
+                <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#D8C6AF', fontSize: '1.15rem' }}>{p}</span>
               </li>
             ))}
           </ul>
@@ -783,13 +836,6 @@ function About() {
         <div className="relative">
           <div className="overflow-hidden shadow-xl" style={{ border: '2px solid #C78A3B' }}>
             <img src={heroImg} alt="Seneca Falls Self Storage facility on Route 414" className="h-full w-full object-cover" />
-          </div>
-          <div
-            className="absolute -bottom-6 -left-6 hidden sm:block px-6 py-4 shadow-xl"
-            style={{ background: '#4A0F14', border: '1px solid #C78A3B' }}
-          >
-            <div style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontSize: '2rem', fontWeight: 800 }}>84</div>
-            <div style={{ color: '#D8C6AF', fontSize: '0.62rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Units on site</div>
           </div>
         </div>
       </div>
@@ -846,10 +892,10 @@ function Reviews() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-14">
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
             What Our Customers Say
           </span>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 700, marginTop: '0.4rem' }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: 'clamp(2rem, 4.5vw, 2.875rem)', fontWeight: 700, marginTop: '0.4rem' }}>
             Trusted by Your Neighbors
           </h2>
           <div className="flex items-center justify-center gap-3 mt-4 max-w-sm mx-auto">
@@ -870,15 +916,15 @@ function Reviews() {
               {/* Opening quote mark */}
               <div style={{ fontFamily: "'Playfair Display', serif", color: '#C78A3B', fontSize: '2.5rem', lineHeight: 1, marginBottom: '-0.5rem', opacity: 0.6 }}>"</div>
 
-              <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#3A1A12', fontSize: '1.05rem', lineHeight: '1.7', flex: 1 }}>
+              <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#3A1A12', fontSize: '1.15rem', lineHeight: '1.7', flex: 1 }}>
                 {r.text}
               </p>
 
               <div className="mt-5 pt-4" style={{ borderTop: '1px solid #D8C6AF' }}>
                 <Stars count={r.rating} />
                 <div className="mt-2">
-                  <div style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontWeight: 700, fontSize: '0.95rem' }}>{r.name}</div>
-                  <div style={{ fontFamily: "'Cormorant Garamond', serif", color: '#7A5C4A', fontSize: '0.85rem' }}>{r.location}</div>
+                  <div style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontWeight: 700, fontSize: '1.05rem' }}>{r.name}</div>
+                  <div style={{ fontFamily: "'Cormorant Garamond', serif", color: '#7A5C4A', fontSize: '0.92rem' }}>{r.location}</div>
                 </div>
               </div>
             </div>
@@ -945,7 +991,7 @@ function InquirySuccess({
         style={{
           fontFamily: "'Cormorant Garamond', serif",
           color: "#C78A3B",
-          fontSize: "0.7rem",
+          fontSize: "0.85rem",
           fontWeight: 600,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
@@ -977,7 +1023,7 @@ function InquirySuccess({
         style={{
           fontFamily: "'Cormorant Garamond', serif",
           color: "#5C3A28",
-          fontSize: "1.05rem",
+          fontSize: "1.15rem",
           lineHeight: "1.75",
           margin: 0,
           maxWidth: "360px",
@@ -1105,14 +1151,14 @@ function Contact() {
     <section id="contact" className="py-12 sm:py-20 lg:py-28" style={{ background: 'linear-gradient(160deg, #FDF8F0 0%, #F4E9D8 100%)' }}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-2xl mx-auto text-center">
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
             Get In Touch
           </span>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 700, marginTop: '0.4rem', textWrap: 'balance' } as React.CSSProperties}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: 'clamp(2rem, 4.5vw, 2.875rem)', fontWeight: 700, marginTop: '0.4rem', textWrap: 'balance' } as React.CSSProperties}>
             Ready to Reserve? Let's Get You Set Up.
           </h2>
           <div style={{ height: '1px', width: '72px', background: '#C78A3B', marginTop: '1rem', marginBottom: '0.75rem', marginLeft: 'auto', marginRight: 'auto' }} />
-          <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#5C3A28', fontSize: '1.05rem' }}>
+          <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#5C3A28', fontSize: '1.15rem' }}>
             Or just have a question — we respond fast.
           </p>
         </div>
@@ -1199,17 +1245,42 @@ function Contact() {
           </div>
 
           {/* Map full width below both boxes */}
-          <div className="overflow-hidden" style={{ border: '1px solid #D8C6AF' }}>
+          <a
+            href={MAP_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block relative overflow-hidden group"
+            style={{ border: '1px solid #D8C6AF' }}
+            aria-label="View Seneca Falls Self Storage on Google Maps"
+          >
             <iframe
               title="Map to Seneca Falls Self Storage"
               src={MAP_EMBED}
               width="100%"
               height="320"
-              style={{ border: 0, display: 'block' }}
+              style={{ border: 0, display: 'block', pointerEvents: 'none' }}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
-          </div>
+            <div
+              className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              style={{ background: 'rgba(42, 20, 18, 0.55)' }}
+            >
+              <span style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                color: '#F4E9D8',
+                fontWeight: 700,
+                fontSize: '1rem',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                border: '1px solid #C78A3B',
+                padding: '0.6rem 1.4rem',
+                background: 'rgba(199,138,59,0.15)',
+              }}>
+                View on Google Maps ↗
+              </span>
+            </div>
+          </a>
         </div>
       </div>
     </section>
@@ -1242,7 +1313,7 @@ function Footer() {
           <div>
             <div style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontWeight: 600, fontSize: '0.85rem', letterSpacing: '0.06em', marginBottom: '0.6rem' }}>Quick Links</div>
             <div className="flex flex-col gap-1">
-              {[['Pricing', '#pricing', false], ['Check Availability', '#contact', false], ['Pay Online', '/login', false]].map(([label, href, external]) => (
+              {[['Pricing', '#pricing', false], ['Check Availability', '#contact', false]].map(([label, href, external]) => (
                 <a
                   key={label as string}
                   href={href as string}

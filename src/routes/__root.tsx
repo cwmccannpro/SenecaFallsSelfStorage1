@@ -1,16 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  Outlet,
-  Link,
-  createRootRouteWithContext,
-  useRouter,
-  HeadContent,
-  Scripts,
-} from "@tanstack/react-router";
-import { AuthProvider } from "@/contexts/auth";
-
-import appCss from "../styles.css?url";
-import faviconUrl from "../assets/favicon.png?url";
+import { Outlet, Link, createRootRoute, useRouter } from "@tanstack/react-router";
 
 function NotFoundComponent() {
   return (
@@ -69,58 +57,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Seneca Falls Self Storage — Secure, Accessible, Affordable" },
-      { name: "description", content: "Locally owned self storage in Seneca Falls, NY. 24/7 access, monitored security, 12-foot ceilings. Units from $65/mo. First month FREE." },
-      { property: "og:title", content: "Seneca Falls Self Storage" },
-      { property: "og:description", content: "Secure. Accessible. Affordable. Self storage on Route 414 in Seneca Falls, NY." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      {
-        rel: "icon",
-        href: faviconUrl,
-        type: "image/png",
-      },
-    ],
-  }),
-  shellComponent: RootShell,
+export const Route = createRootRoute({
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}
-
 function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Outlet />
-      </AuthProvider>
-    </QueryClientProvider>
-  );
+  return <Outlet />;
 }
