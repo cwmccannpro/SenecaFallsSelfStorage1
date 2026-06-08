@@ -52,7 +52,7 @@ const NAV = [
 const UNITS = [
   { size: "5×10", price: 65, fits: "Perfect for boxes, seasonal gear, or a small bedroom", popular: true },
   { size: "10×10", price: 85, fits: "Fits furniture, boxes, and everything from a 1-bedroom apartment" },
-  { size: "10×15", price: 95, fits: "Fits a 2-bedroom apartment" },
+  { size: "10×15", price: 105, fits: "Fits a 2-bedroom apartment" },
   { size: "10×20", price: 140, fits: "Fits a 3-bedroom home" },
 ];
 
@@ -76,7 +76,7 @@ const UNIT_DATA = [
     ],
   },
   {
-    size: "10×15", width: 10, depth: 15, sqft: 150, price: 95, label: "10 ft × 15 ft",
+    size: "10×15", width: 10, depth: 15, sqft: 150, price: 105, label: "10 ft × 15 ft",
     fits: [
       "Full 2-bedroom apartment contents",
       "Multiple beds, couch & dining set",
@@ -397,9 +397,14 @@ function Hero() {
           </p>
 
           {/* Subheadline */}
-          <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '15px', fontWeight: 500, fontStyle: 'italic', color: 'rgba(244,233,216,0.80)', textShadow: '0 1px 5px rgba(20,6,4,0.55)', margin: 0 }}>
-            24/7 access. No contracts. Locally owned.
-          </p>
+          <div className="flex items-center justify-center gap-4" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '15px', fontWeight: 500, fontStyle: 'italic', color: 'rgba(244,233,216,0.80)', textShadow: '0 1px 5px rgba(20,6,4,0.55)' }}>
+            {['24/7 Access', '24/7 Security', 'Locally Owned'].map((item) => (
+              <span key={item} className="flex items-center gap-1.5 whitespace-nowrap">
+                <Check className="h-3.5 w-3.5 flex-none" style={{ color: '#C78A3B' }} />
+                {item}
+              </span>
+            ))}
+          </div>
 
         </div>
 
