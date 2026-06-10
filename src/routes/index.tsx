@@ -360,12 +360,20 @@ function Hero() {
           alt="Seneca Falls Self Storage facility on Route 414 — three buildings of red-door units"
           className="hero-img"
         />
-        {/* Gradient scrim — image only */}
-        <div style={{
+        {/* Gradient scrim — full-width fade from bottom. hero-scrim adds side fade on desktop */}
+        <div className="hero-scrim" style={{
           position: 'absolute', bottom: 0, left: 0, right: 0,
           height: '72%',
           background: 'linear-gradient(to top, rgba(58,12,17,0.96) 0%, rgba(58,12,17,0.6) 45%, rgba(58,12,17,0.0) 100%)',
           zIndex: 2,
+          pointerEvents: 'none',
+        }} />
+
+        {/* Desktop-only central radial — extra darkness behind hero text, fading to sides */}
+        <div className="hidden sm:block" style={{
+          position: 'absolute', inset: 0,
+          background: 'radial-gradient(ellipse 52% 80% at 50% 108%, rgba(58,12,17,0.82) 0%, rgba(58,12,17,0.45) 45%, transparent 70%)',
+          zIndex: 3,
           pointerEvents: 'none',
         }} />
 

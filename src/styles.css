@@ -75,9 +75,27 @@
 @media (min-width: 640px) {
   .hero-img {
     max-height: 580px;
-    object-position: center 58%;
+    object-position: center 66%;
     -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 88%);
     mask-image: linear-gradient(to bottom, black 50%, transparent 88%);
+  }
+
+  /* Desktop: fade the base scrim out at both sides so edges/sign show through */
+  .hero-scrim {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 26%,
+      black 74%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 26%,
+      black 74%,
+      transparent 100%
+    );
   }
 }
 
