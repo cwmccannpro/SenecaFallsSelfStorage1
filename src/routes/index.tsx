@@ -57,7 +57,7 @@ const UNITS = [
   { size: "5×10", price: 65, fits: "Perfect for boxes, seasonal gear, or a small bedroom", popular: true },
   { size: "10×10", price: 85, fits: "Fits furniture, boxes, and everything from a 1-bedroom apartment" },
   { size: "10×15", price: 105, fits: "Fits a 2-bedroom apartment" },
-  { size: "10×20", price: 140, fits: "Fits a 3-bedroom home" },
+  { size: "10×20", price: 130, fits: "Fits a 3-bedroom home" },
 ];
 
 const UNIT_DATA = [
@@ -89,7 +89,7 @@ const UNIT_DATA = [
     ],
   },
   {
-    size: "10×20", width: 10, depth: 20, sqft: 200, price: 140, label: "10 ft × 20 ft",
+    size: "10×20", width: 10, depth: 20, sqft: 200, price: 130, label: "10 ft × 20 ft",
     fits: [
       "Full 3-bedroom home contents",
       "Multiple large furniture pieces",
@@ -483,7 +483,7 @@ function PhoneBanner() {
 function Features() {
   const items = [
     { icon: KeyRound, title: "24/7 Access", desc: "Get in whenever you need to — your schedule, your storage." },
-    { icon: ShieldCheck, title: "24-Hour Security", desc: "Sleep easy. Cameras and a secure perimeter watch over your belongings around the clock." },
+    { icon: ShieldCheck, title: "24-Hour Security", desc: "Sleep easy. Cameras watch over your belongings around the clock." },
     { icon: MoveVertical, title: "12-Foot Ceilings & Tall Units", desc: "12-foot ceilings mean you store more without paying for a bigger footprint — stack smart and save." },
     { icon: Boxes, title: "No Long-Term Contracts", desc: "Rent month-to-month and move out when you're ready — no penalties, no pressure." },
   ];
