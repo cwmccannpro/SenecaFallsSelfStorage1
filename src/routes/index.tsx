@@ -26,8 +26,12 @@ import { toast } from "sonner";
 import { z } from "zod";
 import emailjs from "@emailjs/browser";
 import heroImg from "@/assets/Hero.png";
-import logoImg from "@/assets/logo4.png";
+import logoImg from "@/assets/logo4 (1).png";
 import faviconImg from "@/assets/favicon.png";
+import facilityImg1 from "@/assets/IMG_9167.jpeg";
+import facilityImg2 from "@/assets/IMG_9170.jpeg";
+import facilityImg3 from "@/assets/IMG_9173.jpeg";
+import facilityImg4 from "@/assets/IMG_9174.jpeg";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -839,8 +843,30 @@ function About() {
           </ul>
         </div>
         <div className="relative">
-          <div className="overflow-hidden shadow-xl" style={{ border: '2px solid #C78A3B' }}>
-            <img src={heroImg} alt="Seneca Falls Self Storage facility on Route 414" className="h-full w-full object-cover" />
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '3px',
+              background: '#C78A3B',
+              border: '2px solid #C78A3B',
+              boxShadow: '0 8px 40px rgba(20,4,8,0.55)',
+            }}
+          >
+            {[
+              { src: facilityImg1, alt: "Clean storage unit interior — looking in from the door" },
+              { src: facilityImg2, alt: "Spacious storage unit with tall metal walls" },
+              { src: facilityImg3, alt: "Inside view of a storage unit showing the red door" },
+              { src: facilityImg4, alt: "Corner view of a storage unit showing the floor and walls" },
+            ].map(({ src, alt }) => (
+              <div key={alt} style={{ aspectRatio: '1 / 1', overflow: 'hidden' }}>
+                <img
+                  src={src}
+                  alt={alt}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </div>
