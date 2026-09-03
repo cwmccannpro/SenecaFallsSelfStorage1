@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   KeyRound,
   ShieldCheck,
@@ -10,6 +10,11 @@ import {
   MapPin,
   Check,
   ArrowRight,
+  ArrowUpRight,
+  Menu,
+  X,
+  Star,
+  CalendarDays,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,45 +29,46 @@ import {
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { z } from "zod";
-import emailjs from "@emailjs/browser";
-import heroImg from "@/assets/Hero.png";
-import logoImg from "@/assets/logo4 (1).png";
-import faviconImg from "@/assets/favicon.png";
+import heroImg from "@/assets/Hero.webp";
+import logoImg from "@/assets/logo4-opt.png";
 import facilityImg1 from "@/assets/IMG_9167.jpeg";
 import facilityImg2 from "@/assets/IMG_9170.jpeg";
 import facilityImg3 from "@/assets/IMG_9173.jpeg";
 import facilityImg4 from "@/assets/IMG_9174.jpeg";
 
-export const Route = createFileRoute("/")({
-  component: Index,
-});
-
-const PAY_URL = "https://example.com/pay"; // TODO: replace with Square payment link
+export const Route = createFileRoute("/")({ component: Index });
 const ADDRESS = "189 Ovid St, Seneca Falls, NY 13148";
 const PHONE_DISPLAY = "(315) 539-4692";
 const PHONE_HREF = "tel:+13155394692";
 const EMAIL = "tim@senecafallsselfstorage.com";
 const MAP_EMBED = `https://www.google.com/maps?q=42.895932,-76.798644&output=embed`;
-const MAP_LINK = "https://www.google.com/maps/place/Seneca+Falls+Self+Storage+LLC/@42.9160559,-76.8080464,14z/data=!4m10!1m2!2m1!1sseneca+falls+self+storage!3m6!1s0x89d0b7b99fb065c7:0xf507e8a07fc5c869!8m2!3d42.895932!4d-76.798644!15sChlzZW5lY2EgZmFsbHMgc2VsZiBzdG9yYWdlWhsiGXNlbmVjYSBmYWxscyBzZWxmIHN0b3JhZ2WSARVzZWxmX3N0b3JhZ2VfZmFjaWxpdHmaASRDaGREU1VoTk1HOW5TMFZKUTBGblNVTnViV0YyU201blJSQULgAQD6AQQIABBM!16s%2Fg%2F1tfrsxj1?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D";
-
-const NAV = [
-  { label: "Home", href: "#top" },
-  { label: "Unit Sizes", href: "#unit-sizes" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Reviews", href: "#reviews" },
-  { label: "Contact", href: "#contact" },
-];
+const MAP_LINK =
+  "https://www.google.com/maps/place/Seneca+Falls+Self+Storage+LLC/@42.9160559,-76.8080464,14z/data=!4m10!1m2!2m1!1sseneca+falls+self+storage!3m6!1s0x89d0b7b99fb065c7:0xf507e8a07fc5c869!8m2!3d42.895932!4d-76.798644!15sChlzZW5lY2EgZmFsbHMgc2VsZiBzdG9yYWdlWhsiGXNlbmVjYSBmYWxscyBzZWxmIHN0b3JhZ2WSARVzZWxmX3N0b3JhZ2VfZmFjaWxpdHmaASRDaGREU1VoTk1HOW5TMFZKUTBGblNVTnViV0YyU201blJSQULgAQD6AQQIABBM!16s%2Fg%2F1tfrsxj1?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D";
 
 const UNITS = [
-  { size: "5×10", price: 65, fits: "Perfect for boxes, seasonal gear, or a small bedroom", popular: true },
-  { size: "10×10", price: 85, fits: "Fits furniture, boxes, and everything from a 1-bedroom apartment" },
+  {
+    size: "5×10",
+    price: 65,
+    fits: "Perfect for boxes, seasonal gear, or a small bedroom",
+    popular: true,
+  },
+  {
+    size: "10×10",
+    price: 85,
+    fits: "Fits furniture, boxes, and everything from a 1-bedroom apartment",
+  },
   { size: "10×15", price: 105, fits: "Fits a 2-bedroom apartment" },
   { size: "10×20", price: 130, fits: "Fits a 3-bedroom home" },
 ];
 
 const UNIT_DATA = [
   {
-    size: "5×10", width: 5, depth: 10, sqft: 50, price: 65, label: "5 ft × 10 ft",
+    size: "5×10",
+    width: 5,
+    depth: 10,
+    sqft: 50,
+    price: 65,
+    label: "5 ft × 10 ft",
     fits: [
       "Boxes & seasonal gear (10–15 totes)",
       "Small bedroom furniture",
@@ -71,7 +77,12 @@ const UNIT_DATA = [
     ],
   },
   {
-    size: "10×10", width: 10, depth: 10, sqft: 100, price: 85, label: "10 ft × 10 ft",
+    size: "10×10",
+    width: 10,
+    depth: 10,
+    sqft: 100,
+    price: 85,
+    label: "10 ft × 10 ft",
     fits: [
       "Full 1-bedroom apartment contents",
       "Queen bed, dresser & couch",
@@ -80,7 +91,12 @@ const UNIT_DATA = [
     ],
   },
   {
-    size: "10×15", width: 10, depth: 15, sqft: 150, price: 105, label: "10 ft × 15 ft",
+    size: "10×15",
+    width: 10,
+    depth: 15,
+    sqft: 150,
+    price: 105,
+    label: "10 ft × 15 ft",
     fits: [
       "Full 2-bedroom apartment contents",
       "Multiple beds, couch & dining set",
@@ -89,7 +105,12 @@ const UNIT_DATA = [
     ],
   },
   {
-    size: "10×20", width: 10, depth: 20, sqft: 200, price: 130, label: "10 ft × 20 ft",
+    size: "10×20",
+    width: 10,
+    depth: 20,
+    sqft: 200,
+    price: 130,
+    label: "10 ft × 20 ft",
     fits: [
       "Full 3-bedroom home contents",
       "Multiple large furniture pieces",
@@ -136,752 +157,6 @@ const UNIT_FURNITURE: Record<string, FurnitureItem[]> = {
   ],
 };
 
-function Index() {
-  return (
-    <div className="min-h-screen bg-background text-foreground">
-      <TopNav />
-      <div className="h-[116px] sm:h-[80px] lg:h-[112px]" />
-      <Hero />
-      <Features />
-      <UnitSizing />
-      <Pricing />
-      <About />
-      <Reviews />
-      <Contact />
-      <Footer />
-      <Toaster richColors position="top-center" />
-    </div>
-  );
-}
-
-function smoothScrollTo(href: string) {
-  const id = href.replace('#', '');
-  if (id === 'top') {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } else {
-    const el = document.getElementById(id);
-    if (el) {
-      const header = document.querySelector('header');
-      const mobileMenu = document.querySelector('[data-mobile-menu]');
-      const navH = (header?.getBoundingClientRect().height ?? 116) - (mobileMenu?.getBoundingClientRect().height ?? 0);
-      let top = el.getBoundingClientRect().top + window.scrollY - navH;
-      if (id === 'unit-sizes') {
-        const label = document.getElementById('unit-sizes-label');
-        if (label) {
-          top = label.getBoundingClientRect().top + window.scrollY - navH;
-        }
-      }
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
-  }
-}
-
-function Wordmark({ className = "" }: { className?: string }) {
-  return (
-    <a href="#top" onClick={e => { e.preventDefault(); smoothScrollTo('#top'); }} className={`flex items-center flex-none ${className}`} aria-label="Seneca Falls Self Storage">
-      <img src={logoImg} alt="Seneca Falls Self Storage" className="h-14 sm:h-16 lg:h-20 w-auto" />
-    </a>
-  );
-}
-
-function NavLink({ href, children, onClick }: { href: string; children: React.ReactNode; onClick?: () => void }) {
-  return (
-    <a
-      href={href}
-      onClick={e => { e.preventDefault(); smoothScrollTo(href); onClick?.(); }}
-      style={{
-        fontFamily: "'Cormorant Garamond', Georgia, serif",
-        color: '#D8C6AF',
-        fontSize: '0.95rem',
-        fontWeight: 700,
-        letterSpacing: '0.12em',
-        textTransform: 'uppercase' as const,
-        transition: 'color 0.2s ease, text-shadow 0.2s ease',
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.color = '#E0A34A';
-        e.currentTarget.style.textShadow = '0 0 14px rgba(224, 163, 74, 0.45)';
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.color = '#D8C6AF';
-        e.currentTarget.style.textShadow = 'none';
-      }}
-    >
-      {children}
-    </a>
-  );
-}
-
-function TopNav() {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <header
-      id="top"
-      className="fixed top-0 left-0 right-0 z-50"
-      style={{
-        background: 'linear-gradient(180deg, #5C1219 0%, #4A0F14 45%, #3A0C11 100%)',
-        borderTop: '2px solid #C78A3B',
-        boxShadow: '0 4px 32px rgba(30, 4, 8, 0.7), inset 0 1px 0 rgba(224, 163, 74, 0.12)',
-      }}
-    >
-      {/* Main bar */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="relative flex h-20 lg:h-28 items-center justify-between gap-6">
-
-          {/* Mobile left spacer — mirrors hamburger width so logo centers perfectly */}
-          <div className="xl:hidden flex-none w-9 h-9" />
-
-          {/* Logo — absolute center on mobile, static left on desktop */}
-          <div className="absolute left-1/2 -translate-x-1/2 xl:static xl:left-auto xl:translate-x-0">
-            <Wordmark />
-          </div>
-
-          {/* Desktop nav */}
-          <nav className="hidden xl:flex items-center gap-7">
-            {NAV.map((n) => (
-              <NavLink key={n.label} href={n.href}>{n.label}</NavLink>
-            ))}
-          </nav>
-
-          {/* Right CTAs */}
-          <div className="flex items-center gap-4 flex-none">
-            {/* Reserve Unit — desktop only */}
-            <a
-              href="#availability-form"
-              onClick={e => { e.preventDefault(); smoothScrollTo('#availability-form'); }}
-              className="btn-nav-primary"
-            >
-              Check Availability
-            </a>
-
-            {/* Hamburger */}
-            <button
-              onClick={() => setOpen(o => !o)}
-              className="xl:hidden flex flex-col justify-center gap-[5px] w-9 h-9 p-1.5"
-              aria-label={open ? 'Close menu' : 'Open menu'}
-            >
-              <span style={{
-                display: 'block', height: '1.5px', width: '100%', background: '#C78A3B',
-                transition: 'transform 0.3s ease, opacity 0.3s ease',
-                transform: open ? 'translateY(6.5px) rotate(45deg)' : 'none',
-              }} />
-              <span style={{
-                display: 'block', height: '1.5px', width: '100%', background: '#C78A3B',
-                transition: 'opacity 0.3s ease',
-                opacity: open ? 0 : 1,
-              }} />
-              <span style={{
-                display: 'block', height: '1.5px', width: '100%', background: '#C78A3B',
-                transition: 'transform 0.3s ease',
-                transform: open ? 'translateY(-6.5px) rotate(-45deg)' : 'none',
-              }} />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Decorative bottom stroke — width of address text, fading ends */}
-      <div className="flex justify-center">
-        <div style={{
-          height: '1px',
-          width: '15rem',
-          background: 'linear-gradient(to right, transparent, #C78A3B 22%, #C78A3B 78%, transparent)',
-        }} />
-      </div>
-
-      {/* Address banner — mobile only, hidden when menu is open */}
-      <div className="sm:hidden">
-          <a
-            href={MAP_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold uppercase w-full"
-            style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              letterSpacing: '0.15em',
-              color: '#F4E9D8',
-              background: 'transparent',
-              borderBottom: '2px solid #C78A3B',
-              textDecoration: 'none',
-            }}
-          >
-            <MapPin className="h-3.5 w-3.5 flex-none" style={{ color: '#C78A3B' }} />
-            189 Ovid St, Seneca Falls, NY
-          </a>
-        </div>
-
-      {/* Mobile slide-down menu */}
-      <div
-        data-mobile-menu
-        style={{
-          maxHeight: open ? '480px' : '0',
-          overflow: 'hidden',
-          transition: 'max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-          borderTop: open ? '1px solid rgba(199, 138, 59, 0.25)' : 'none',
-          background: 'linear-gradient(180deg, #3A0C11 0%, #4A0F14 100%)',
-        }}
-      >
-        <nav className="mx-auto max-w-7xl px-6 py-4 flex flex-col">
-          {NAV.map((n) => (
-            <NavLink key={n.label} href={n.href} onClick={() => setOpen(false)}>
-              <span className="block py-4 border-b" style={{ borderColor: 'rgba(199, 138, 59, 0.2)' }}>
-                {n.label}
-              </span>
-            </NavLink>
-          ))}
-          <div className="mt-5 flex flex-col gap-3 pb-2">
-            <a href={PHONE_HREF} className="btn-primary w-full justify-center">
-              <Phone className="h-4 w-4" />
-              {PHONE_DISPLAY}
-            </a>
-            <a
-              href="#availability-form"
-              onClick={e => { e.preventDefault(); smoothScrollTo('#availability-form'); setOpen(false); }}
-              className="btn-gold w-full justify-center"
-            >
-              Check Availability
-            </a>
-          </div>
-        </nav>
-      </div>
-    </header>
-  );
-}
-
-function Hero() {
-  return (
-    <section style={{ background: '#3A0C11', position: 'relative', overflow: 'hidden' }}>
-
-      {/* ── Full-bleed image ── */}
-      <div className="relative">
-        <img
-          src={heroImg}
-          alt="Seneca Falls Self Storage facility on Route 414 — three buildings of red-door units"
-          className="hero-img"
-        />
-        {/* Gradient scrim — full-width fade from bottom. hero-scrim adds side fade on desktop */}
-        <div className="hero-scrim" style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0,
-          height: '72%',
-          background: 'linear-gradient(to top, rgba(58,12,17,0.96) 0%, rgba(58,12,17,0.6) 45%, rgba(58,12,17,0.0) 100%)',
-          zIndex: 2,
-          pointerEvents: 'none',
-        }} />
-
-        {/* Desktop-only central radial — extra darkness behind hero text, fading to sides */}
-        <div className="hidden sm:block" style={{
-          position: 'absolute', inset: 0,
-          background: 'radial-gradient(ellipse 52% 80% at 50% 108%, rgba(58,12,17,0.82) 0%, rgba(58,12,17,0.45) 45%, transparent 70%)',
-          zIndex: 3,
-          pointerEvents: 'none',
-        }} />
-
-        {/* Address badge — desktop only (mobile version lives in the fixed header) */}
-        <div className="absolute hidden sm:block top-8 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap">
-          <span
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase"
-            style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              letterSpacing: '0.15em',
-              color: '#F4E9D8',
-              background: 'rgba(74, 15, 20, 0.72)',
-              border: '1px solid #C78A3B',
-              backdropFilter: 'blur(4px)',
-            }}
-          >
-            <MapPin className="h-3.5 w-3.5 flex-none" style={{ color: '#C78A3B' }} />
-            189 Ovid St, Seneca Falls, NY
-          </span>
-        </div>
-
-      </div>
-
-      {/* ── Content ── */}
-      <div className="-mt-[180px] sm:-mt-28 relative z-10 text-center px-4 sm:px-6 pt-2 sm:pt-0 pb-8 sm:pb-10">
-
-        {/* Hero text hierarchy */}
-        <div className="max-w-lg mx-auto mb-5 sm:mb-8">
-
-          {/* Headline */}
-          <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '42px', fontWeight: 800, fontStyle: 'normal', lineHeight: 1.1, color: '#F4E9D8', textShadow: '0 2px 10px rgba(20,6,4,0.65)', margin: '0 0 8px 0' }}>
-            Store It Here.<br />Rest Easy.
-          </p>
-
-          {/* Subheadline */}
-          <div className="flex items-center justify-center gap-4" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '15px', fontWeight: 500, fontStyle: 'italic', color: 'rgba(244,233,216,0.80)', textShadow: '0 1px 5px rgba(20,6,4,0.55)' }}>
-            {['24/7 Access', '24/7 Security', 'Locally Owned'].map((item) => (
-              <span key={item} className="flex items-center gap-1.5 whitespace-nowrap">
-                <Check className="h-3.5 w-3.5 flex-none" style={{ color: '#C78A3B' }} />
-                {item}
-              </span>
-            ))}
-          </div>
-
-        </div>
-
-        {/* CTAs */}
-        <div className="mt-7 sm:mt-0 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-          <a href="#contact" onClick={e => { e.preventDefault(); smoothScrollTo('#contact'); }} className="btn-gold w-full sm:w-auto justify-center">
-            Check Availability <ArrowRight className="h-4 w-4" />
-          </a>
-          <a href="#pricing" onClick={e => { e.preventDefault(); smoothScrollTo('#pricing'); }} className="btn-primary w-full sm:w-auto justify-center">
-            View Pricing
-          </a>
-        </div>
-
-        <a
-          href={PHONE_HREF}
-          className="mt-8 inline-flex items-center justify-center gap-2"
-          style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            color: '#F4E9D8',
-            fontSize: '1.35rem',
-            fontWeight: 600,
-            letterSpacing: '0.06em',
-            textDecoration: 'none',
-            transition: 'color 0.2s ease',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.color = '#E0A34A'; }}
-          onMouseLeave={e => { e.currentTarget.style.color = '#F4E9D8'; }}
-        >
-          <Phone className="h-5 w-5 flex-none" style={{ color: '#C78A3B' }} />
-          {PHONE_DISPLAY}
-        </a>
-      </div>
-
-    </section>
-  );
-}
-
-function PhoneBanner() {
-  return (
-    <div style={{ background: 'linear-gradient(180deg, #3A0C11 0%, #4A0F14 100%)' }}>
-      {/* Gradient bridge — tall fade zone before phone text */}
-      <div style={{ height: '60px', background: 'linear-gradient(180deg, #3A0C11 0%, #3E0D12 100%)' }} />
-      <a
-        href={PHONE_HREF}
-        className="flex items-center justify-center gap-2 w-full py-3 text-xs font-semibold uppercase"
-        style={{
-          fontFamily: "'Cormorant Garamond', Georgia, serif",
-          letterSpacing: '0.15em',
-          color: '#F4E9D8',
-          textDecoration: 'none',
-          transition: 'color 0.2s ease',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.color = '#E0A34A'; }}
-        onMouseLeave={e => { e.currentTarget.style.color = '#F4E9D8'; }}
-      >
-        <Phone className="h-3.5 w-3.5 flex-none" style={{ color: '#C78A3B' }} />
-        {PHONE_DISPLAY}
-      </a>
-      <div style={{ height: '20px' }} />
-    </div>
-  );
-}
-
-function Features() {
-  const items = [
-    { icon: KeyRound, title: "24/7 Access", desc: "Get in whenever you need to — your schedule, your storage." },
-    { icon: ShieldCheck, title: "24-Hour Security", desc: "Sleep easy. Cameras watch over your belongings around the clock." },
-    { icon: MoveVertical, title: "12-Foot Ceilings & Tall Units", desc: "12-foot ceilings mean you store more without paying for a bigger footprint — stack smart and save." },
-    { icon: Boxes, title: "No Long-Term Contracts", desc: "Rent month-to-month and move out when you're ready — no penalties, no pressure." },
-  ];
-  return (
-    <section
-      id="features"
-      className="py-10 sm:py-16 lg:py-24"
-      style={{ background: 'linear-gradient(180deg, #4A0F14 0%, #3A0C11 100%)', borderTop: '2px solid #C78A3B', borderBottom: '2px solid #C78A3B' }}
-    >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="mb-8 sm:mb-12 text-center">
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
-            Our Facility
-          </span>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontSize: 'clamp(2rem, 4.5vw, 2.875rem)', fontWeight: 700, marginTop: '0.5rem' }}>
-            The Way Storage Should Be
-          </h2>
-          <div style={{ height: '1px', background: 'linear-gradient(to right, transparent, #C78A3B, transparent)', marginTop: '1.5rem' }} />
-        </div>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map(({ icon: Icon, title, desc }) => (
-            <div
-              key={title}
-              className="p-6 transition-all duration-300 cursor-default"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(199,138,59,0.28)' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(199,138,59,0.09)'; (e.currentTarget as HTMLElement).style.borderColor = '#C78A3B'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(199,138,59,0.28)'; }}
-            >
-              <div
-                className="flex h-11 w-11 items-center justify-center"
-                style={{ background: 'rgba(199,138,59,0.14)', border: '1px solid rgba(199,138,59,0.4)' }}
-              >
-                <Icon className="h-5 w-5" style={{ color: '#E0A34A' }} />
-              </div>
-              <h3 className="mt-4 text-xl font-bold" style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8' }}>
-                {title}
-              </h3>
-              <p className="mt-2" style={{ fontFamily: "'Cormorant Garamond', serif", color: '#D8C6AF', fontSize: '1.15rem', lineHeight: '1.65' }}>
-                {desc}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function UnitSvg({ width, depth, size }: { width: number; depth: number; size: string }) {
-  const SCALE = 20;
-  const PAD = 30;
-  const unitW = width * SCALE;
-  const unitH = depth * SCALE;
-  const svgW = unitW + PAD * 2;
-  const svgH = unitH + PAD * 2 + 12;
-
-  const vLines: number[] = [];
-  for (let x = 1; x < width; x++) vLines.push(x * SCALE);
-  const hLines: number[] = [];
-  for (let y = 1; y < depth; y++) hLines.push(y * SCALE);
-
-  const items = UNIT_FURNITURE[size] || [];
-
-  return (
-    <svg
-      width={svgW}
-      height={svgH}
-      viewBox={`0 0 ${svgW} ${svgH}`}
-      style={{ maxWidth: '100%', display: 'block', margin: '0 auto' }}
-      aria-label={`Floor plan for ${size} storage unit`}
-    >
-      <rect x={PAD} y={PAD} width={unitW} height={unitH} fill="#F4E9D8" stroke="#2A1412" strokeWidth={2} />
-
-      {vLines.map((x, i) => (
-        <line key={`v${i}`} x1={PAD + x} y1={PAD} x2={PAD + x} y2={PAD + unitH}
-          stroke="#C78A3B" strokeWidth={0.5} strokeDasharray="3,3" opacity={0.4} />
-      ))}
-      {hLines.map((y, i) => (
-        <line key={`h${i}`} x1={PAD} y1={PAD + y} x2={PAD + unitW} y2={PAD + y}
-          stroke="#C78A3B" strokeWidth={0.5} strokeDasharray="3,3" opacity={0.4} />
-      ))}
-
-      {items.map((item, i) => (
-        <g key={i}>
-          <rect
-            x={PAD + item.x * SCALE} y={PAD + item.y * SCALE}
-            width={item.w * SCALE} height={item.h * SCALE}
-            fill={item.color || "rgba(199,138,59,0.18)"}
-            stroke="#C78A3B" strokeWidth={0.75} rx={1}
-          />
-          {item.w * SCALE > 28 && item.h * SCALE > 12 && (
-            <text
-              x={PAD + (item.x + item.w / 2) * SCALE}
-              y={PAD + (item.y + item.h / 2) * SCALE + 3.5}
-              textAnchor="middle" fill="#5C3A28" fontSize={8.5}
-              fontFamily="'Cormorant Garamond', Georgia, serif"
-            >
-              {item.label}
-            </text>
-          )}
-        </g>
-      ))}
-
-      {/* Door gap at bottom */}
-      <rect x={PAD + unitW / 2 - 22} y={PAD + unitH - 2} width={44} height={4} fill="#F4E9D8" />
-      <line x1={PAD + unitW / 2 - 22} y1={PAD + unitH} x2={PAD + unitW / 2 + 22} y2={PAD + unitH}
-        stroke="#C78A3B" strokeWidth={2} />
-      <text x={PAD + unitW / 2} y={PAD + unitH + 13}
-        textAnchor="middle" fill="#7A4A20" fontSize={8}
-        fontFamily="'Cormorant Garamond', Georgia, serif" letterSpacing={1.5}>
-        ▲ DOOR
-      </text>
-
-      {/* Width label */}
-      <text x={PAD + unitW / 2} y={PAD - 10} textAnchor="middle"
-        fill="#2A1412" fontSize={10} fontWeight={700}
-        fontFamily="'Cormorant Garamond', Georgia, serif">
-        {width} ft
-      </text>
-
-      {/* Depth label (rotated) */}
-      <text
-        x={PAD - 12} y={PAD + unitH / 2}
-        textAnchor="middle" fill="#2A1412" fontSize={10} fontWeight={700}
-        fontFamily="'Cormorant Garamond', Georgia, serif"
-        transform={`rotate(-90, ${PAD - 12}, ${PAD + unitH / 2})`}
-      >
-        {depth} ft
-      </text>
-    </svg>
-  );
-}
-
-function UnitSizing() {
-  const [active, setActive] = useState(0);
-  const BAR_SCALE = 8;
-  const unit = UNIT_DATA[active];
-
-  return (
-    <section
-      id="unit-sizes"
-      className="py-12 sm:py-20 lg:py-28"
-      style={{ background: 'linear-gradient(160deg, #FDF8F0 0%, #F4E9D8 100%)', borderTop: '2px solid #C78A3B', borderBottom: '2px solid #C78A3B' }}
-    >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-
-        {/* Header */}
-        <div className="max-w-2xl mx-auto text-center">
-          <span id="unit-sizes-label" style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
-            Unit Sizes
-          </span>
-          <h2 id="unit-sizes-heading" style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: 'clamp(2rem, 4.5vw, 2.875rem)', fontWeight: 700, marginTop: '0.4rem' }}>
-            Find Your Perfect Fit
-          </h2>
-          <div style={{ height: '1px', width: '72px', background: '#C78A3B', marginTop: '1rem', marginBottom: '0.75rem', marginLeft: 'auto', marginRight: 'auto' }} />
-          <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#5C3A28', fontSize: '1.15rem', lineHeight: '1.7' }}>
-            Select a size to see a floor plan and what fits inside. All dimensions shown to scale.
-          </p>
-        </div>
-
-        {/* Comparison bar */}
-        <div className="mt-8 sm:mt-10 overflow-x-auto">
-          <div className="flex items-end justify-center gap-6 pb-2 min-w-max mx-auto">
-            {UNIT_DATA.map((u, i) => (
-              <button
-                key={u.size}
-                onClick={() => setActive(i)}
-                title={`${u.size} — ${u.sqft} sq ft`}
-                style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
-                className="flex flex-col items-center gap-2"
-              >
-                <div style={{
-                  width: u.width * BAR_SCALE,
-                  height: u.depth * BAR_SCALE,
-                  background: active === i ? 'rgba(74,15,20,0.82)' : 'rgba(199,138,59,0.12)',
-                  border: active === i ? '2px solid #C78A3B' : '1.5px solid rgba(199,138,59,0.45)',
-                  transition: 'all 0.2s ease',
-                }} />
-                <span style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: '0.92rem', fontWeight: 700,
-                  color: active === i ? '#2A1412' : '#7A4A20',
-                  letterSpacing: '0.06em',
-                }}>
-                  {u.size}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Floor plan + info panel */}
-        <div className="mt-8 grid gap-8 md:grid-cols-2 md:items-start">
-
-          {/* SVG */}
-          <div
-            className="flex justify-center items-start overflow-auto"
-            style={{ maxHeight: 520 }}
-          >
-            <UnitSvg width={unit.width} depth={unit.depth} size={unit.size} />
-          </div>
-
-          {/* Info */}
-          <div className="flex flex-col gap-6 text-center lg:text-left">
-            <div>
-              <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
-                Unit Size
-              </span>
-              <h3 style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: '2rem', fontWeight: 700, marginTop: '0.2rem' }}>
-                {unit.label}
-              </h3>
-              <div style={{ fontFamily: "'Cormorant Garamond', serif", color: '#7A4A20', fontSize: '1.25rem', marginTop: '0.15rem' }}>
-                {unit.sqft} sq ft
-              </div>
-            </div>
-
-            <div style={{ height: '1px', width: '60px', background: '#C78A3B' }} className="mx-auto lg:mx-0" />
-
-            <div>
-              <div style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.75rem' }}>
-                What fits inside:
-              </div>
-              <ul className="space-y-2.5 inline-block text-left">
-                {unit.fits.map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <span className="mt-0.5 flex h-5 w-5 flex-none items-center justify-center"
-                      style={{ background: 'rgba(199,138,59,0.18)', border: '1px solid rgba(199,138,59,0.45)' }}>
-                      <Check className="h-3.5 w-3.5" style={{ color: '#E0A34A' }} />
-                    </span>
-                    <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#3A1A12', fontSize: '1.15rem' }}>
-                      {item}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <div style={{ fontFamily: "'Cormorant Garamond', serif", color: '#7A4A20', fontSize: '0.92rem', textTransform: 'uppercase' as const, letterSpacing: '0.15em' }}>
-                Starting at
-              </div>
-              <div className="flex items-baseline justify-center lg:justify-start gap-1 mt-1 mb-4">
-                <span style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: '2.5rem', fontWeight: 800 }}>
-                  ${unit.price}
-                </span>
-                <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#7A4A20', fontSize: '1rem' }}>/mo</span>
-              </div>
-              <a
-                href="#contact"
-                onClick={e => { e.preventDefault(); smoothScrollTo('#contact'); }}
-                className="btn-gold w-full justify-center"
-              >
-                Check Availability
-              </a>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-  );
-}
-
-function Pricing() {
-  return (
-    <section id="pricing" className="py-12 sm:py-20 lg:py-28" style={{ background: 'linear-gradient(160deg, #FDF8F0 0%, #F4E9D8 100%)' }}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="max-w-2xl">
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
-            Storage Units
-          </span>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: 'clamp(2rem, 4.5vw, 2.875rem)', fontWeight: 700, marginTop: '0.4rem' }}>
-            Simple, Honest Pricing
-          </h2>
-          <div style={{ height: '1px', width: '72px', background: '#C78A3B', marginTop: '1rem', marginBottom: '0.75rem' }} />
-          <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#5C3A28', fontSize: '1.15rem', lineHeight: '1.7' }}>
-            Month-to-month rentals. No hidden fees. Pick the size that fits — upgrade or downsize anytime.
-          </p>
-        </div>
-        <div className="mt-8 sm:mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {UNITS.map((u) => (
-            <div
-              key={u.size}
-              className="relative flex flex-col p-6"
-              style={{
-                background: u.popular ? '#4A0F14' : '#FDF8F0',
-                border: u.popular ? '2px solid #C78A3B' : '1px solid #D8C6AF',
-                boxShadow: u.popular ? '0 8px 32px rgba(74,15,20,0.22)' : '0 2px 8px rgba(42,20,18,0.06)',
-              }}
-            >
-              {u.popular && (
-                <span
-                  className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 text-xs font-bold uppercase whitespace-nowrap"
-                  style={{ fontFamily: "'Cormorant Garamond', serif", letterSpacing: '0.15em', background: '#C78A3B', color: '#2A1412' }}
-                >
-                  Most Popular
-                </span>
-              )}
-              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', color: u.popular ? '#D8C6AF' : '#7A4A20' }}>
-                {u.size}
-              </div>
-              <div className="mt-3 flex items-baseline gap-1">
-                <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '2.5rem', fontWeight: 800, color: u.popular ? '#F4E9D8' : '#2A1412' }}>${u.price}</span>
-                <span style={{ fontFamily: "'Cormorant Garamond', serif", color: u.popular ? '#D8C6AF' : '#7A4A20', fontSize: '1rem' }}>/mo</span>
-              </div>
-              <p className="mt-3 flex-1" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', color: u.popular ? '#D8C6AF' : '#5C3A28' }}>
-                {u.fits}
-              </p>
-              <a href="#contact" onClick={e => { e.preventDefault(); smoothScrollTo('#contact'); }} className={`mt-6 justify-center ${u.popular ? 'btn-gold' : 'btn-primary'}`}>
-                Check Availability
-              </a>
-            </div>
-          ))}
-        </div>
-        <div
-          className="mt-10 px-6 py-5 text-center"
-          style={{ background: '#4A0F14', border: '1px solid #C78A3B' }}
-        >
-          <p style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontSize: '1.25rem', fontWeight: 700 }}>
-            ✦ Pay Annually. Get One Month FREE. ✦
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function About() {
-  const points = [
-    "Tall units for extra vertical storage",
-    "Easy 24/7 access",
-    "Monitored security",
-    "Flexible month-to-month rentals",
-  ];
-  return (
-    <section
-      id="about"
-      className="py-12 sm:py-20 lg:py-28"
-      style={{ background: 'linear-gradient(180deg, #4A0F14 0%, #3A0C11 100%)', borderTop: '2px solid #C78A3B', borderBottom: '2px solid #C78A3B' }}
-    >
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 md:grid-cols-2 md:items-center">
-        <div>
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
-            Why Us
-          </span>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontSize: 'clamp(2rem, 4.5vw, 2.875rem)', fontWeight: 700, marginTop: '0.4rem', lineHeight: 1.2 }}>
-            Locally Owned.<br />Built for the Finger Lakes.
-          </h2>
-          <div style={{ height: '1px', width: '60px', background: '#C78A3B', margin: '1.1rem 0' }} />
-          <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#D8C6AF', fontSize: '1.25rem', lineHeight: '1.8' }}>
-            Family-owned and right in your backyard. We built this place the way we'd want storage for our own family — clean, secure, and easy to use. No corporate runaround. When you call, you reach a real person.
-          </p>
-          <ul className="mt-6 space-y-3">
-            {points.map((p) => (
-              <li key={p} className="flex items-start gap-3">
-                <span
-                  className="mt-0.5 flex h-5 w-5 flex-none items-center justify-center"
-                  style={{ background: 'rgba(199,138,59,0.18)', border: '1px solid rgba(199,138,59,0.45)' }}
-                >
-                  <Check className="h-3.5 w-3.5" style={{ color: '#E0A34A' }} />
-                </span>
-                <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#D8C6AF', fontSize: '1.15rem' }}>{p}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="relative">
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '3px',
-              background: '#C78A3B',
-              border: '2px solid #C78A3B',
-              boxShadow: '0 8px 40px rgba(20,4,8,0.55)',
-            }}
-          >
-            {[
-              { src: facilityImg1, alt: "Clean storage unit interior — looking in from the door" },
-              { src: facilityImg2, alt: "Spacious storage unit with tall metal walls" },
-              { src: facilityImg3, alt: "Inside view of a storage unit showing the red door" },
-              { src: facilityImg4, alt: "Corner view of a storage unit showing the floor and walls" },
-            ].map(({ src, alt }) => (
-              <div key={alt} style={{ aspectRatio: '1 / 1', overflow: 'hidden' }}>
-                <img
-                  src={src}
-                  alt={alt}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 const REVIEWS = [
   {
     name: "Thomas Dyson",
@@ -909,82 +184,6 @@ const REVIEWS = [
   },
 ];
 
-function Stars({ count }: { count: number }) {
-  return (
-    <div className="flex items-center gap-0.5">
-      {Array.from({ length: count }).map((_, i) => (
-        <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="#C78A3B" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-        </svg>
-      ))}
-    </div>
-  );
-}
-
-function Reviews() {
-  return (
-    <section
-      id="reviews"
-      className="py-12 sm:py-20 lg:py-28"
-      style={{ background: 'linear-gradient(160deg, #FDF8F0 0%, #F4E9D8 100%)' }}
-    >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        {/* Header */}
-        <div className="text-center mb-8 sm:mb-14">
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
-            What Our Customers Say
-          </span>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: 'clamp(2rem, 4.5vw, 2.875rem)', fontWeight: 700, marginTop: '0.4rem' }}>
-            Trusted by Your Neighbors
-          </h2>
-          <div className="flex items-center justify-center gap-3 mt-4 max-w-sm mx-auto">
-            <div style={{ height: '1px', flex: 1, background: 'linear-gradient(to right, transparent, #C78A3B)' }} />
-            <Stars count={5} />
-            <div style={{ height: '1px', flex: 1, background: 'linear-gradient(to left, transparent, #C78A3B)' }} />
-          </div>
-        </div>
-
-        {/* Review cards */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {REVIEWS.map((r) => (
-            <div
-              key={r.name}
-              className="flex flex-col p-6"
-              style={{ background: '#FDF8F0', border: '1px solid #D8C6AF' }}
-            >
-              {/* Opening quote mark */}
-              <div style={{ fontFamily: "'Playfair Display', serif", color: '#C78A3B', fontSize: '2.5rem', lineHeight: 1, marginBottom: '-0.5rem', opacity: 0.6 }}>"</div>
-
-              <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#3A1A12', fontSize: '1.15rem', lineHeight: '1.7', flex: 1 }}>
-                {r.text}
-              </p>
-
-              <div className="mt-5 pt-4" style={{ borderTop: '1px solid #D8C6AF' }}>
-                <Stars count={r.rating} />
-                <div className="mt-2">
-                  <div style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontWeight: 700, fontSize: '1.05rem' }}>{r.name}</div>
-                  <div style={{ fontFamily: "'Cormorant Garamond', serif", color: '#7A5C4A', fontSize: '0.92rem' }}>{r.location}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* CTA nudge */}
-        <div className="mt-8 sm:mt-12 text-center">
-          <a
-            href="#contact"
-            onClick={e => { e.preventDefault(); smoothScrollTo('#contact'); }}
-            className="btn-primary"
-          >
-            Check Availability
-          </a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 const formSchema = z.object({
   name: z.string().trim().min(1, "Name required").max(100),
   email: z.string().trim().email("Valid email required").max(255),
@@ -992,6 +191,662 @@ const formSchema = z.object({
   unitSize: z.string().min(1, "Select a unit size"),
   message: z.string().trim().max(1000).optional().or(z.literal("")),
 });
+
+const EMAILJS_SERVICE_ID = "service_bs0jee3";
+const EMAILJS_TEMPLATE_ID = "template_xucae0r";
+const EMAILJS_PUBLIC_KEY = "__PjBvNitw59O6Kq6";
+
+function UnitSvg({ width, depth, size }: { width: number; depth: number; size: string }) {
+  const SCALE = 20;
+  const PAD = 30;
+  const unitW = width * SCALE;
+  const unitH = depth * SCALE;
+  const svgW = unitW + PAD * 2;
+  const svgH = unitH + PAD * 2 + 12;
+
+  const vLines: number[] = [];
+  for (let x = 1; x < width; x++) vLines.push(x * SCALE);
+  const hLines: number[] = [];
+  for (let y = 1; y < depth; y++) hLines.push(y * SCALE);
+
+  const items = UNIT_FURNITURE[size] || [];
+
+  return (
+    <svg
+      role="img"
+      width={svgW}
+      height={svgH}
+      viewBox={`0 0 ${svgW} ${svgH}`}
+      style={{ maxWidth: "100%", display: "block", margin: "0 auto" }}
+      aria-label={`Floor plan for ${size} storage unit`}
+    >
+      <rect
+        x={PAD}
+        y={PAD}
+        width={unitW}
+        height={unitH}
+        fill="#F4E9D8"
+        stroke="#2A1412"
+        strokeWidth={2}
+      />
+
+      {vLines.map((x, i) => (
+        <line
+          key={`v${i}`}
+          x1={PAD + x}
+          y1={PAD}
+          x2={PAD + x}
+          y2={PAD + unitH}
+          stroke="#C78A3B"
+          strokeWidth={0.5}
+          strokeDasharray="3,3"
+          opacity={0.4}
+        />
+      ))}
+      {hLines.map((y, i) => (
+        <line
+          key={`h${i}`}
+          x1={PAD}
+          y1={PAD + y}
+          x2={PAD + unitW}
+          y2={PAD + y}
+          stroke="#C78A3B"
+          strokeWidth={0.5}
+          strokeDasharray="3,3"
+          opacity={0.4}
+        />
+      ))}
+
+      {items.map((item, i) => (
+        <g key={i}>
+          <rect
+            x={PAD + item.x * SCALE}
+            y={PAD + item.y * SCALE}
+            width={item.w * SCALE}
+            height={item.h * SCALE}
+            fill={item.color || "rgba(199,138,59,0.18)"}
+            stroke="#C78A3B"
+            strokeWidth={0.75}
+            rx={1}
+          />
+          {item.w * SCALE > 28 && item.h * SCALE > 12 && (
+            <text
+              x={PAD + (item.x + item.w / 2) * SCALE}
+              y={PAD + (item.y + item.h / 2) * SCALE + 3.5}
+              textAnchor="middle"
+              fill="#5C3A28"
+              fontSize={13}
+              fontFamily="'DM Sans', sans-serif"
+            >
+              {item.label}
+            </text>
+          )}
+        </g>
+      ))}
+
+      {/* Door gap at bottom */}
+      <rect x={PAD + unitW / 2 - 22} y={PAD + unitH - 2} width={44} height={4} fill="#F4E9D8" />
+      <line
+        x1={PAD + unitW / 2 - 22}
+        y1={PAD + unitH}
+        x2={PAD + unitW / 2 + 22}
+        y2={PAD + unitH}
+        stroke="#C78A3B"
+        strokeWidth={2}
+      />
+      <text
+        x={PAD + unitW / 2}
+        y={PAD + unitH + 13}
+        textAnchor="middle"
+        fill="#7A4A20"
+        fontSize={11}
+        fontFamily="'DM Sans', sans-serif"
+        letterSpacing={1.5}
+      >
+        ▲ DOOR
+      </text>
+
+      {/* Width label */}
+      <text
+        x={PAD + unitW / 2}
+        y={PAD - 10}
+        textAnchor="middle"
+        fill="#2A1412"
+        fontSize={13}
+        fontWeight={700}
+        fontFamily="'DM Sans', sans-serif"
+      >
+        {width} ft
+      </text>
+
+      {/* Depth label (rotated) */}
+      <text
+        x={PAD - 12}
+        y={PAD + unitH / 2}
+        textAnchor="middle"
+        fill="#2A1412"
+        fontSize={13}
+        fontWeight={700}
+        fontFamily="'DM Sans', sans-serif"
+        transform={`rotate(-90, ${PAD - 12}, ${PAD + unitH / 2})`}
+      >
+        {depth} ft
+      </text>
+    </svg>
+  );
+}
+
+const NAV = [
+  { label: "Unit sizes", href: "#unit-sizes" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Our facility", href: "#about" },
+  { label: "Reviews", href: "#reviews" },
+];
+
+function Index() {
+  const [unitSize, setUnitSize] = useState("");
+  const [submitted, setSubmitted] = useState<{ name: string; unitSize: string } | null>(null);
+  const requestUnit = (size: string) => {
+    setUnitSize(size);
+    setSubmitted(null);
+    requestAnimationFrame(() => smoothScrollTo("#availability-form"));
+  };
+  return (
+    <div id="top">
+      <a className="skip-link" href="#main-content">
+        Skip to content
+      </a>
+      <TopNav />
+      <main id="main-content" tabIndex={-1}>
+        <Hero />
+        <Features />
+        <UnitSizing onSelect={requestUnit} />
+        <Pricing onSelect={requestUnit} />
+        <About />
+        <Reviews />
+        <Contact
+          unitSize={unitSize}
+          setUnitSize={setUnitSize}
+          submitted={submitted}
+          setSubmitted={setSubmitted}
+        />
+      </main>
+      <Footer />
+      <Toaster richColors position="top-center" />
+    </div>
+  );
+}
+
+function smoothScrollTo(href: string) {
+  const target = document.getElementById(href.slice(1));
+  if (!target) return;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const headerHeight = document.querySelector("header")?.getBoundingClientRect().height ?? 88;
+  const top =
+    href === "#top" ? 0 : target.getBoundingClientRect().top + window.scrollY - headerHeight - 24;
+  window.scrollTo({ top, behavior: reducedMotion ? "instant" : "smooth" });
+  // Move keyboard focus along with the visual navigation, without a second scroll.
+  if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+  target.focus({ preventScroll: true });
+}
+
+function SectionLink({
+  href,
+  children,
+  className = "",
+  onNavigate,
+}: {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+  onNavigate?: () => void;
+}) {
+  return (
+    <a
+      href={href}
+      className={className}
+      onClick={(e) => {
+        e.preventDefault();
+        onNavigate?.();
+        smoothScrollTo(href);
+      }}
+    >
+      {children}
+    </a>
+  );
+}
+
+function Wordmark() {
+  return (
+    <SectionLink href="#top" className="wordmark">
+      <img src={logoImg} alt="Seneca Falls Self Storage — home" width="252" height="80" />
+    </SectionLink>
+  );
+}
+
+function TopNav() {
+  const [open, setOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        menuButton.current?.focus();
+      }
+    };
+    const desktop = window.matchMedia("(min-width: 1100px)");
+    const closeOnDesktop = () => {
+      if (desktop.matches) setOpen(false);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => {
+      document.removeEventListener("keydown", closeOnEscape);
+      desktop.removeEventListener("change", closeOnDesktop);
+    };
+  }, [open]);
+  return (
+    <header className="site-header">
+      <div className="container nav-bar">
+        <Wordmark />
+        <nav className="desktop-nav" aria-label="Main navigation">
+          {NAV.map((n) => (
+            <SectionLink key={n.href} href={n.href}>
+              {n.label}
+            </SectionLink>
+          ))}
+        </nav>
+        <div className="nav-actions">
+          <a href={PHONE_HREF} className="nav-phone" aria-label={"Call " + PHONE_DISPLAY}>
+            <Phone size={16} />
+            <span>{PHONE_DISPLAY}</span>
+          </a>
+          <SectionLink href="#availability-form" className="btn-gold nav-cta">
+            Check Availability <ArrowUpRight size={16} />
+          </SectionLink>
+          <button
+            ref={menuButton}
+            className="menu-toggle"
+            aria-expanded={open}
+            aria-controls="mobile-navigation"
+            aria-label={open ? "Close menu" : "Open menu"}
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <X /> : <Menu />}
+          </button>
+        </div>
+      </div>
+      <a className="mobile-location" href={MAP_LINK} target="_blank" rel="noopener noreferrer">
+        <MapPin size={16} aria-hidden="true" />
+        <span>189 Ovid St, Seneca Falls, NY</span>
+        <ArrowUpRight size={15} aria-hidden="true" />
+      </a>
+      <nav
+        id="mobile-navigation"
+        className="mobile-nav"
+        aria-label="Mobile navigation"
+        hidden={!open}
+      >
+        {NAV.map((n) => (
+          <SectionLink key={n.href} href={n.href} onNavigate={() => setOpen(false)}>
+            {n.label}
+            <ArrowUpRight size={16} />
+          </SectionLink>
+        ))}
+        <SectionLink href="#availability-form" onNavigate={() => setOpen(false)}>
+          Check availability
+          <ArrowUpRight size={16} />
+        </SectionLink>
+        <a href={PHONE_HREF}>
+          <Phone size={16} />
+          {PHONE_DISPLAY}
+        </a>
+      </nav>
+    </header>
+  );
+}
+
+function Hero() {
+  return (
+    <section className="hero" aria-labelledby="hero-title">
+      <img
+        src={heroImg}
+        alt="Red-door storage buildings at Seneca Falls Self Storage on Route 414"
+        width="1122"
+        height="1402"
+        fetchPriority="high"
+        className="hero-img"
+      />
+      <div className="container hero-grid">
+        <a className="hero-location" href={MAP_LINK} target="_blank" rel="noopener noreferrer">
+          <MapPin size={17} aria-hidden="true" />
+          189 Ovid St, Seneca Falls, NY
+          <ArrowUpRight size={16} aria-hidden="true" />
+        </a>
+        <div className="hero-copy">
+          <h1 id="hero-title">
+            Store It Here.
+            <br />
+            <em>Rest Easy.</em>
+          </h1>
+          <p className="hero-description">
+            Locally owned self storage on Route 414 in Seneca Falls.
+          </p>
+          <div className="hero-actions">
+            <SectionLink href="#availability-form" className="btn-gold">
+              Check Availability <ArrowRight size={18} />
+            </SectionLink>
+            <SectionLink href="#pricing" className="hero-text-link">
+              View Pricing <ArrowUpRight size={17} />
+            </SectionLink>
+          </div>
+          <div className="hero-assurance">
+            <ShieldCheck size={19} />
+            <span>24/7 Access</span>
+            <span className="dot" />
+            <span>24/7 Security</span>
+            <span className="dot" />
+            <span>Locally Owned</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Features() {
+  const features = [
+    {
+      icon: KeyRound,
+      title: "24/7 Access",
+      text: "Get in whenever you need to — your schedule, your storage.",
+    },
+    {
+      icon: ShieldCheck,
+      title: "24-Hour Security",
+      text: "Sleep easy. Cameras watch over your belongings around the clock.",
+    },
+    {
+      icon: MoveVertical,
+      title: "12-Foot Ceilings",
+      text: "Store more without paying for a bigger footprint — stack smart and save.",
+    },
+    {
+      icon: CalendarDays,
+      title: "No Long-Term Contracts",
+      text: "Rent month-to-month and move out when you’re ready — no pressure.",
+    },
+  ];
+  return (
+    <section className="features" aria-label="Storage benefits">
+      <div className="container feature-grid">
+        {features.map(({ icon: Icon, title, text }) => (
+          <div className="feature" key={title}>
+            <Icon size={24} strokeWidth={1.5} />
+            <div>
+              <h2>{title}</h2>
+              <p>{text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SectionHeading({
+  eyebrow,
+  title,
+  children,
+  centered = false,
+}: {
+  eyebrow: string;
+  title: string;
+  children?: React.ReactNode;
+  centered?: boolean;
+}) {
+  return (
+    <div className={"section-heading" + (centered ? " centered" : "")}>
+      <p className="eyebrow">{eyebrow}</p>
+      <h2>{title}</h2>
+      {children && <p className="section-description">{children}</p>}
+    </div>
+  );
+}
+
+function UnitSizing({ onSelect }: { onSelect: (size: string) => void }) {
+  const [active, setActive] = useState(0);
+  const unit = UNIT_DATA[active];
+  return (
+    <section id="unit-sizes" className="section size-section">
+      <div className="container">
+        <SectionHeading eyebrow="Unit Sizes" title="Find Your Perfect Fit" centered>
+          Select a size to see a floor plan and what fits inside.
+        </SectionHeading>
+        <div className="size-guide">
+          <div className="size-options" role="group" aria-label="Choose a storage unit size">
+            {UNIT_DATA.map((u, i) => (
+              <button
+                key={u.size}
+                className={active === i ? "size-option active" : "size-option"}
+                aria-pressed={active === i}
+                aria-controls="unit-details"
+                onClick={() => setActive(i)}
+              >
+                <span>
+                  {u.size}
+                  <small> ft</small>
+                </span>
+                <span>{u.sqft} sq ft</span>
+              </button>
+            ))}
+          </div>
+          <div className="size-detail" id="unit-details">
+            <div className="floor-plan">
+              <span className="plan-label">A look inside</span>
+              <div className="plan-drawing">
+                <UnitSvg width={unit.width} depth={unit.depth} size={unit.size} />
+              </div>
+              <p>
+                Illustrative layout · Dimensions in feet
+                <br />
+                Actual fit depends on your items and how you pack.
+              </p>
+            </div>
+            <div className="unit-info">
+              <div aria-live="polite" aria-atomic="true">
+                <p className="eyebrow">{unit.sqft} square feet · 12-foot ceilings</p>
+                <h3>{unit.label}</h3>
+                <p className="unit-dimensions">What fits inside:</p>
+              </div>
+              <ul className="check-list">
+                {unit.fits.map((item) => (
+                  <li key={item}>
+                    <Check size={17} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div className="unit-bottom">
+                <div className="unit-price">
+                  <strong>${unit.price}</strong>
+                  <span>/ month</span>
+                </div>
+                <button className="btn-primary" onClick={() => onSelect(unit.size)}>
+                  Choose this unit
+                  <ArrowRight size={17} />
+                </button>
+              </div>
+              <p className="unit-help">
+                Not sure? <a href={PHONE_HREF}>Give us a call.</a> We’re happy to help.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Pricing({ onSelect }: { onSelect: (size: string) => void }) {
+  return (
+    <section id="pricing" className="section pricing-section">
+      <div className="container">
+        <div className="section-heading-row">
+          <SectionHeading eyebrow="Storage Units" title="Simple, Honest Pricing">
+            Month-to-month rentals. No hidden fees. Pick the size that fits — upgrade or downsize
+            anytime.
+          </SectionHeading>
+          <span className="section-note">
+            <Check size={17} /> No long-term contracts
+          </span>
+        </div>
+        <div className="pricing-grid">
+          {UNITS.map((u, i) => (
+            <article key={u.size} className={"pricing-card" + (u.popular ? " popular" : "")}>
+              <div className="pricing-card-top">
+                <Boxes size={25} strokeWidth={1.4} />
+                {u.popular && <span className="popular-label">Most popular</span>}
+              </div>
+              <h3>
+                {u.size}
+                <span> ft</span>
+              </h3>
+              <p className="pricing-area">{UNIT_DATA[i].sqft} square feet</p>
+              <div className="price">
+                <strong>${u.price}</strong>
+                <span>/ month</span>
+              </div>
+              <p className="pricing-fits">{u.fits}.</p>
+              <div className="pricing-includes">
+                <Check size={15} />
+                24/7 access included
+              </div>
+              <button
+                className={u.popular ? "btn-gold" : "btn-outline"}
+                onClick={() => onSelect(u.size)}
+              >
+                Check availability
+                <ArrowUpRight size={17} />
+              </button>
+            </article>
+          ))}
+        </div>
+        <div className="annual-offer">
+          <div className="offer-icon">
+            <CalendarDays size={25} strokeWidth={1.5} />
+          </div>
+          <div>
+            <strong>Pay Annually. Get One Month FREE.</strong>
+            <p>Ask us about annual payment options.</p>
+          </div>
+          <SectionLink href="#availability-form">
+            Ask about annual savings
+            <ArrowUpRight size={17} />
+          </SectionLink>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function About() {
+  return (
+    <section id="about" className="section about-section">
+      <div className="container about-grid">
+        <div className="about-copy">
+          <p className="eyebrow">Why Us</p>
+          <h2>
+            Locally Owned.
+            <br />
+            <em>Built for the Finger Lakes.</em>
+          </h2>
+          <p>
+            Family-owned and right in your backyard. We built this place the way we'd want storage
+            for our own family — clean, secure, and easy to use.
+          </p>
+          <p>No corporate runaround. When you call, you reach a real person.</p>
+          <div className="about-signoff">
+            <div className="about-mark">
+              <KeyRound size={23} />
+            </div>
+            <div>
+              <strong>Family-owned. Locally operated.</strong>
+              <span>Find us on Route 414 in Seneca Falls.</span>
+            </div>
+          </div>
+          <a className="text-link" href={MAP_LINK} target="_blank" rel="noopener noreferrer">
+            Get Directions
+            <ArrowUpRight size={18} />
+          </a>
+        </div>
+        <div className="facility-gallery">
+          {[
+            { src: facilityImg1, alt: "Storage unit interior viewed from the entrance" },
+            { src: facilityImg2, alt: "Tall walls inside a storage unit" },
+            { src: facilityImg3, alt: "Storage interior with a red roll-up door" },
+            { src: facilityImg4, alt: "Clean floor and walls inside a storage unit" },
+          ].map(({ src, alt }) => (
+            <img
+              key={src}
+              src={src}
+              alt={alt}
+              loading="lazy"
+              decoding="async"
+              width="560"
+              height="560"
+            />
+          ))}
+          <p>
+            <MapPin size={14} /> A closer look at our facility
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Stars({ count }: { count: number }) {
+  return (
+    <div className="stars" role="img" aria-label={count + " out of 5 stars"}>
+      {Array.from({ length: count }, (_, i) => (
+        <Star key={i} size={14} fill="currentColor" aria-hidden="true" />
+      ))}
+    </div>
+  );
+}
+
+function Reviews() {
+  return (
+    <section id="reviews" className="section reviews-section">
+      <div className="container">
+        <SectionHeading
+          eyebrow="What Our Customers Say"
+          title="Trusted by Your Neighbors"
+          centered
+        />
+        <div className="reviews-grid">
+          {REVIEWS.map((r) => (
+            <figure className="review" key={r.name}>
+              <Stars count={r.rating} />
+              <blockquote>{r.text}</blockquote>
+              <figcaption>
+                <span className="review-avatar" aria-hidden="true">
+                  {r.name.charAt(0)}
+                </span>
+                <div>
+                  <strong>{r.name}</strong>
+                  <span>{r.location}</span>
+                </div>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function InquirySuccess({
   name,
@@ -1002,152 +857,50 @@ function InquirySuccess({
   unitSize: string;
   onReset: () => void;
 }) {
-  const displaySize = unitSize === "not-sure" ? "a unit" : `a ${unitSize} unit`;
+  const heading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    heading.current?.focus({ preventScroll: true });
+  }, []);
   return (
-    <div
-      style={{
-        background: "#FDF8F0",
-        border: "1px solid #D8C6AF",
-        borderTop: "3px solid #C78A3B",
-        padding: "2.5rem 2rem",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
-        gap: "1rem",
-      }}
-    >
-      {/* Favicon icon */}
-      <img
-        src={faviconImg}
-        alt=""
-        style={{ width: "56px", height: "56px", objectFit: "contain" }}
-      />
-
-      {/* Eyebrow */}
-      <p
-        style={{
-          fontFamily: "'Cormorant Garamond', serif",
-          color: "#C78A3B",
-          fontSize: "0.85rem",
-          fontWeight: 600,
-          letterSpacing: "0.22em",
-          textTransform: "uppercase",
-          margin: 0,
-        }}
-      >
-        Inquiry Received
-      </p>
-
-      {/* Heading */}
-      <h3
-        style={{
-          fontFamily: "'Playfair Display', serif",
-          color: "#2A1412",
-          fontSize: "1.5rem",
-          fontWeight: 700,
-          margin: 0,
-          lineHeight: 1.25,
-        }}
-      >
+    <div className="inquiry-success" role="status">
+      <span className="success-icon">
+        <Check size={30} />
+      </span>
+      <p className="eyebrow">Inquiry received</p>
+      <h3 ref={heading} tabIndex={-1}>
         Thank you, {name}.
       </h3>
-
-      {/* Gold rule */}
-      <div style={{ width: "60px", height: "1px", background: "#C78A3B" }} />
-
-      {/* Body */}
-      <p
-        style={{
-          fontFamily: "'Cormorant Garamond', serif",
-          color: "#5C3A28",
-          fontSize: "1.15rem",
-          lineHeight: "1.75",
-          margin: 0,
-          maxWidth: "360px",
-        }}
-      >
-        We've received your request for <strong>{displaySize}</strong> and will
-        be in touch within one business day.
+      <p>
+        We've received your request for{" "}
+        {unitSize === "not-sure" ? "a unit" : "a " + unitSize + " unit"} and will be in touch within
+        one business day.
       </p>
-
-      {/* Direct contact nudge */}
-      <p
-        style={{
-          fontFamily: "'Cormorant Garamond', serif",
-          color: "#7A5C4A",
-          fontSize: "0.95rem",
-          margin: 0,
-        }}
-      >
-        Need a faster answer?
-      </p>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", justifyContent: "center" }}>
-        <a
-          href={PHONE_HREF}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.4rem",
-            fontFamily: "'Cormorant Garamond', serif",
-            color: "#4A0F14",
-            fontSize: "1rem",
-            fontWeight: 700,
-            textDecoration: "none",
-          }}
-        >
-          <Phone className="h-4 w-4" style={{ color: "#C78A3B" }} />
-          {PHONE_DISPLAY}
-        </a>
-        <a
-          href={`mailto:${EMAIL}`}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.4rem",
-            fontFamily: "'Cormorant Garamond', serif",
-            color: "#4A0F14",
-            fontSize: "1rem",
-            textDecoration: "none",
-          }}
-        >
-          <Mail className="h-4 w-4" style={{ color: "#C78A3B" }} />
-          {EMAIL}
-        </a>
-      </div>
-
-      {/* Reset link */}
-      <button
-        onClick={onReset}
-        style={{
-          marginTop: "0.5rem",
-          background: "none",
-          border: "none",
-          fontFamily: "'Cormorant Garamond', serif",
-          color: "#7A5C4A",
-          fontSize: "0.9rem",
-          cursor: "pointer",
-          textDecoration: "underline",
-        }}
-      >
-        Submit another inquiry
+      <a className="text-link" href={PHONE_HREF}>
+        <Phone size={16} />
+        {PHONE_DISPLAY}
+      </a>
+      <button className="btn-outline" onClick={onReset}>
+        Send another inquiry
       </button>
     </div>
   );
 }
 
-const EMAILJS_SERVICE_ID = "service_bs0jee3";
-const EMAILJS_TEMPLATE_ID = "template_xucae0r";
-const EMAILJS_PUBLIC_KEY = "__PjBvNitw59O6Kq6";
-
-function Contact() {
+function Contact({
+  unitSize,
+  setUnitSize,
+  submitted,
+  setSubmitted,
+}: {
+  unitSize: string;
+  setUnitSize: (size: string) => void;
+  submitted: { name: string; unitSize: string } | null;
+  setSubmitted: (value: { name: string; unitSize: string } | null) => void;
+}) {
   const [submitting, setSubmitting] = useState(false);
-  const [unitSize, setUnitSize] = useState("");
-  const [submitted, setSubmitted] = useState<{ name: string; unitSize: string } | null>(null);
-
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (submitting) return;
     const fd = new FormData(e.currentTarget);
     const parsed = formSchema.safeParse({
       name: fd.get("name"),
@@ -1158,168 +911,173 @@ function Contact() {
     });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message ?? "Please check the form");
+      const invalidField = parsed.error.issues[0]?.path[0];
+      if (typeof invalidField === "string") document.getElementById(invalidField)?.focus();
       return;
     }
     setSubmitting(true);
-
     try {
+      const { default: emailjs } = await import("@emailjs/browser");
       await emailjs.send(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
         {
           from_name: parsed.data.name,
           reply_to: parsed.data.email,
-          phone: parsed.data.phone ?? "Not provided",
+          phone: parsed.data.phone,
           unit_size: parsed.data.unitSize === "not-sure" ? "Not sure yet" : parsed.data.unitSize,
           message: parsed.data.message || "No message provided",
         },
-        { publicKey: EMAILJS_PUBLIC_KEY }
+        { publicKey: EMAILJS_PUBLIC_KEY },
       );
+      setSubmitted({ name: parsed.data.name, unitSize: parsed.data.unitSize });
     } catch {
+      toast.error("Something went wrong. Please call us at " + PHONE_DISPLAY + ".");
+    } finally {
       setSubmitting(false);
-      toast.error(`Something went wrong. Please call us at ${PHONE_DISPLAY}.`);
-      return;
     }
-
-    setSubmitting(false);
-
-    setSubmitted({ name: parsed.data.name, unitSize: parsed.data.unitSize });
   };
-
   return (
-    <section id="contact" className="py-12 sm:py-20 lg:py-28" style={{ background: 'linear-gradient(160deg, #FDF8F0 0%, #F4E9D8 100%)' }}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="max-w-2xl mx-auto text-center">
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#C78A3B', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
-            Get In Touch
-          </span>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: 'clamp(2rem, 4.5vw, 2.875rem)', fontWeight: 700, marginTop: '0.4rem', textWrap: 'balance' } as React.CSSProperties}>
-            Ready to Reserve? Let's Get You Set Up.
-          </h2>
-          <div style={{ height: '1px', width: '72px', background: '#C78A3B', marginTop: '1rem', marginBottom: '0.75rem', marginLeft: 'auto', marginRight: 'auto' }} />
-          <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#5C3A28', fontSize: '1.15rem' }}>
+    <section id="contact" className="section contact-section">
+      <div className="container contact-grid">
+        <div className="contact-info">
+          <SectionHeading eyebrow="Get In Touch" title="Ready to Reserve? Let's Get You Set Up.">
             Or just have a question — we respond fast.
-          </p>
-        </div>
-
-        <div className="mt-8 sm:mt-12 flex flex-col gap-8">
-          {/* Top row: info box + form/success side by side */}
-          <div className="grid gap-8 md:grid-cols-2 md:items-stretch">
-            <div className="p-6" style={{ background: '#FDF8F0', border: '1px solid #D8C6AF' }}>
-              <h3 style={{ fontFamily: "'Playfair Display', serif", color: '#2A1412', fontSize: '1.2rem', fontWeight: 700 }}>Email or Call</h3>
-              <ul className="mt-4 space-y-3">
-                <li className="flex items-start gap-3">
-                  <MapPin className="h-4 w-4 mt-0.5 flex-none" style={{ color: '#C78A3B' }} />
-                  <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#3A1A12', fontSize: '1rem' }}>{ADDRESS}</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Phone className="h-4 w-4 mt-0.5 flex-none" style={{ color: '#C78A3B' }} />
-                  <a href={PHONE_HREF}
-                    style={{ fontFamily: "'Cormorant Garamond', serif", color: '#3A1A12', fontSize: '1rem', transition: 'color 0.2s' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = '#C78A3B')}
-                    onMouseLeave={e => (e.currentTarget.style.color = '#3A1A12')}
-                  >{PHONE_DISPLAY}</a>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Mail className="h-4 w-4 mt-0.5 flex-none" style={{ color: '#C78A3B' }} />
-                  <a href={`mailto:${EMAIL}`}
-                    className="break-all"
-                    style={{ fontFamily: "'Cormorant Garamond', serif", color: '#3A1A12', fontSize: '1rem', transition: 'color 0.2s' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = '#C78A3B')}
-                    onMouseLeave={e => (e.currentTarget.style.color = '#3A1A12')}
-                  >{EMAIL}</a>
-                </li>
-              </ul>
-            </div>
-
-            {submitted ? (
-              <InquirySuccess
-                name={submitted.name}
-                unitSize={submitted.unitSize}
-                onReset={() => { setSubmitted(null); setUnitSize(""); }}
-              />
-            ) : (
-            <form id="availability-form" onSubmit={onSubmit} className="p-6 sm:p-8 space-y-4" style={{ background: '#FDF8F0', border: '1px solid #D8C6AF' }}>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" name="name" required maxLength={100} className="mt-1.5" />
-                </div>
-                <div>
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input id="phone" name="phone" type="tel" required maxLength={30} className="mt-1.5" />
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" name="email" type="email" required maxLength={255} className="mt-1.5" />
-              </div>
-              <div>
-                <Label htmlFor="unitSize">Unit Size</Label>
-                <Select value={unitSize} onValueChange={setUnitSize}>
-                  <SelectTrigger id="unitSize" className="mt-1.5">
-                    <SelectValue placeholder="Select a unit size" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {UNITS.map((u) => (
-                      <SelectItem key={u.size} value={u.size}>{u.size} — ${u.price}/mo</SelectItem>
-                    ))}
-                    <SelectItem value="not-sure">Not sure yet</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="message">Message</Label>
-                <Textarea id="message" name="message" rows={4} maxLength={1000} className="mt-1.5" />
-              </div>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="btn-primary w-full justify-center disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
-              >
-                {submitting ? "Sending..." : "Send Inquiry"}
-              </button>
-            </form>
-            )}
+          </SectionHeading>
+          <div className="contact-methods">
+            <a href={PHONE_HREF}>
+              <Phone size={20} />
+              <span>
+                <small>Call Us</small>
+                <strong>{PHONE_DISPLAY}</strong>
+              </span>
+              <ArrowUpRight size={18} />
+            </a>
+            <a href={"mailto:" + EMAIL}>
+              <Mail size={20} />
+              <span>
+                <small>Email Us</small>
+                <strong>{EMAIL}</strong>
+              </span>
+              <ArrowUpRight size={18} />
+            </a>
+            <a href={MAP_LINK} target="_blank" rel="noopener noreferrer">
+              <MapPin size={20} />
+              <span>
+                <small>Visit us on Route 414</small>
+                <strong>{ADDRESS}</strong>
+              </span>
+              <ArrowUpRight size={18} />
+            </a>
           </div>
-
-          {/* Map full width below both boxes */}
-          <a
-            href={MAP_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block relative overflow-hidden group"
-            style={{ border: '1px solid #D8C6AF' }}
-            aria-label="View Seneca Falls Self Storage on Google Maps"
-          >
+          <div className="contact-map">
             <iframe
               title="Map to Seneca Falls Self Storage"
               src={MAP_EMBED}
               width="100%"
-              height="320"
-              style={{ border: 0, display: 'block', pointerEvents: 'none' }}
+              height="210"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
-            <div
-              className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              style={{ background: 'rgba(42, 20, 18, 0.55)' }}
-            >
-              <span style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                color: '#F4E9D8',
-                fontWeight: 700,
-                fontSize: '1rem',
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                border: '1px solid #C78A3B',
-                padding: '0.6rem 1.4rem',
-                background: 'rgba(199,138,59,0.15)',
-              }}>
-                View on Google Maps ↗
-              </span>
-            </div>
-          </a>
+            <a href={MAP_LINK} target="_blank" rel="noopener noreferrer">
+              Get directions
+              <ArrowUpRight size={15} />
+            </a>
+          </div>
+        </div>
+        <div id="availability-form" className="inquiry-panel">
+          {submitted ? (
+            <InquirySuccess
+              name={submitted.name}
+              unitSize={submitted.unitSize}
+              onReset={() => {
+                setSubmitted(null);
+                setUnitSize("");
+              }}
+            />
+          ) : (
+            <form onSubmit={onSubmit} aria-labelledby="inquiry-heading" aria-busy={submitting}>
+              <p className="eyebrow">Get Started</p>
+              <h3 id="inquiry-heading">Check availability</h3>
+              <p className="form-intro">A quick hello. No commitment required.</p>
+              <fieldset disabled={submitting} className="form-fields">
+                <legend className="sr-only">Your contact information and storage needs</legend>
+                <div className="form-row">
+                  <div>
+                    <Label htmlFor="name">Your name</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      autoComplete="name"
+                      placeholder="Full name"
+                      required
+                      maxLength={100}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="phone">Phone number</Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      autoComplete="tel"
+                      placeholder="(315) 555-0123"
+                      required
+                      maxLength={30}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="email">Email address</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    required
+                    maxLength={255}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="unitSize">Unit size</Label>
+                  <Select value={unitSize} onValueChange={setUnitSize} disabled={submitting}>
+                    <SelectTrigger id="unitSize" aria-required="true">
+                      <SelectValue placeholder="Choose a size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {UNITS.map((u) => (
+                        <SelectItem key={u.size} value={u.size}>
+                          {u.size} ft — ${u.price}/month
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="not-sure">Not sure — help me choose</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="message">
+                    Anything else? <span className="optional">(optional)</span>
+                  </Label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    placeholder="What are you storing? When would you like to move in?"
+                    rows={4}
+                    maxLength={1000}
+                  />
+                </div>
+                <button type="submit" className="btn-primary form-submit" disabled={submitting}>
+                  {submitting ? "Sending your inquiry…" : "Send inquiry"}
+                  <ArrowRight size={17} />
+                </button>
+              </fieldset>
+              <p className="form-note">
+                <ShieldCheck size={15} />
+                We’ll be in touch within one business day.
+              </p>
+            </form>
+          )}
         </div>
       </div>
     </section>
@@ -1327,56 +1085,38 @@ function Contact() {
 }
 
 function Footer() {
-  const footerLink = { fontFamily: "'Cormorant Garamond', Georgia, serif", color: '#D8C6AF', fontSize: '0.95rem', transition: 'color 0.2s' };
   return (
-    <footer style={{ background: 'linear-gradient(180deg, #4A0F14 0%, #3A0C11 100%)', borderTop: '2px solid #C78A3B' }}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="site-footer">
+      <div className="container">
+        <div className="footer-top">
           <div>
             <Wordmark />
-            <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#D8C6AF', fontSize: '0.95rem', marginTop: '0.75rem' }}>
-              Locally owned self storage on Route 414.
-            </p>
+            <p>Locally owned self storage on Route 414.</p>
           </div>
           <div>
-            <div style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontWeight: 600, fontSize: '0.85rem', letterSpacing: '0.06em', marginBottom: '0.6rem' }}>Visit</div>
-            <p style={{ fontFamily: "'Cormorant Garamond', serif", color: '#D8C6AF', fontSize: '0.95rem', lineHeight: '1.6' }}>{ADDRESS}</p>
+            <h2>Quick Links</h2>
+            <SectionLink href="#unit-sizes">Unit size guide</SectionLink>
+            <SectionLink href="#pricing">Pricing & savings</SectionLink>
+            <SectionLink href="#availability-form">Check availability</SectionLink>
           </div>
           <div>
-            <div style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontWeight: 600, fontSize: '0.85rem', letterSpacing: '0.06em', marginBottom: '0.6rem' }}>Contact</div>
-            <div className="flex flex-col gap-1">
-              <a href={PHONE_HREF} style={footerLink} onMouseEnter={e => (e.currentTarget.style.color = '#E0A34A')} onMouseLeave={e => (e.currentTarget.style.color = '#D8C6AF')}>{PHONE_DISPLAY}</a>
-              <a href={`mailto:${EMAIL}`} className="break-all" style={footerLink} onMouseEnter={e => (e.currentTarget.style.color = '#E0A34A')} onMouseLeave={e => (e.currentTarget.style.color = '#D8C6AF')}>{EMAIL}</a>
-            </div>
+            <h2>Visit</h2>
+            <a href={MAP_LINK} target="_blank" rel="noopener noreferrer">
+              189 Ovid Street
+              <br />
+              Seneca Falls, NY 13148
+            </a>
+            <p>Unit access: 24 hours, every day</p>
           </div>
           <div>
-            <div style={{ fontFamily: "'Playfair Display', serif", color: '#F4E9D8', fontWeight: 600, fontSize: '0.85rem', letterSpacing: '0.06em', marginBottom: '0.6rem' }}>Quick Links</div>
-            <div className="flex flex-col gap-1">
-              {[['Pricing', '#pricing', false], ['Check Availability', '#contact', false]].map(([label, href, external]) => (
-                <a
-                  key={label as string}
-                  href={href as string}
-                  target={external ? '_blank' : undefined}
-                  rel={external ? 'noopener noreferrer' : undefined}
-                  onClick={!external ? (e => { e.preventDefault(); smoothScrollTo(href as string); }) : undefined}
-                  style={footerLink}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#E0A34A')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#D8C6AF')}
-                >{label}</a>
-              ))}
-            </div>
+            <h2>Contact</h2>
+            <a href={PHONE_HREF}>{PHONE_DISPLAY}</a>
+            <a href={"mailto:" + EMAIL}>{EMAIL}</a>
           </div>
         </div>
-        <div
-          className="mt-10 pt-6 flex flex-wrap items-center justify-between gap-2"
-          style={{ borderTop: '1px solid rgba(199,138,59,0.3)' }}
-        >
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#D8C6AF', fontSize: '0.82rem' }}>
-            © {new Date().getFullYear()} Seneca Falls Self Storage. All rights reserved.
-          </span>
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", color: '#D8C6AF', fontSize: '0.82rem' }}>
-            senecafallsselfstorage.com
-          </span>
+        <div className="footer-bottom">
+          <span>© {new Date().getFullYear()} Seneca Falls Self Storage. All rights reserved.</span>
+          <SectionLink href="#top">Back to top ↑</SectionLink>
         </div>
       </div>
     </footer>
